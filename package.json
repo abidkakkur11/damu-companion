@@ -8,6 +8,7 @@
   "private": true,
   "scripts": {
     "avatar": "node scripts/process-avatar.mjs",
+    "process:v1": "node scripts/process-new-damu.js",
     "start": "electron .",
     "dist": "electron-builder --win nsis"
   },

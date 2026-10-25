@@ -1,0 +1,54 @@
+{
+  "displayHeight": 260,
+  "poses": {
+    "neutral": {
+      "png": "poses/neutral.png",
+      "webp": "poses/neutral.webp",
+      "width": 294,
+      "height": 699,
+      "aspect": 0.4206008583690987
+    },
+    "nail-look": {
+      "png": "poses/nail-look.png",
+      "webp": "poses/nail-look.webp",
+      "width": 343,
+      "height": 702,
+      "aspect": 0.4886039886039886
+    },
+    "looking": {
+      "png": "poses/looking.png",
+      "webp": "poses/looking.webp",
+      "width": 338,
+      "height": 687,
+      "aspect": 0.49199417758369723
+    },
+    "looking-up": {
+      "png": "poses/looking-up.png",
+      "webp": "poses/looking-up.webp",
+      "width": 338,
+      "height": 703,
+      "aspect": 0.48079658605974396
+    },
+    "warning": {
+      "png": "poses/warning.png",
+      "webp": "poses/warning.webp",
+      "width": 339,
+      "height": 700,
+      "aspect": 0.48428571428571426
+    },
+    "angry": {
+      "png": "poses/angry.png",
+      "webp": "poses/angry.webp",
+      "width": 326,
+      "height": 702,
+      "aspect": 0.46438746438746437
+    },
+    "apologies": {
+      "png": "poses/apologies.png",
+      "webp": "poses/apologies.webp",
+      "width": 320,
+      "height": 701,
+      "aspect": 0.456490727532097
+    }
+  }
+}

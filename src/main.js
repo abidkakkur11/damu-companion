@@ -7,12 +7,23 @@ if (!app.requestSingleInstanceLock()) app.quit();
 
 // Serve src/ and assets/ over app://damu so the renderer is same-origin (canvas stays untainted).
 protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
-const APP_ROOT = path.join(__dirname, "..");
+const APP_ROOT = path.resolve(__dirname, "..");
 function handleAppProtocol(request) {
   const rel = decodeURIComponent(new URL(request.url).pathname).replace(/^\/+/, "");
   const file = path.resolve(APP_ROOT, rel);
-  const allowed = ["src", "assets"].some((d) => file.startsWith(path.join(APP_ROOT, d) + path.sep));
-  if (!allowed) return new Response("forbidden", { status: 403 });
+  const fileLower = file.toLowerCase();
+  const allowed = ["src", "assets"].some((d) => {
+    const prefix = (path.join(APP_ROOT, d) + path.sep).toLowerCase();
+    return fileLower.startsWith(prefix);
+  });
+  if (!allowed) {
+    console.error(`[protocol] 403 Forbidden: ${request.url} -> ${file}`);
+    return new Response("forbidden", { status: 403 });
+  }
+  if (!fs.existsSync(file)) {
+    console.error(`[protocol] 404 Not Found: ${request.url} -> ${file}`);
+    return new Response("not found", { status: 404 });
+  }
   return net.fetch(pathToFileURL(file).href);
 }
 
@@ -38,12 +49,25 @@ function createWindow() {
     hasShadow: false, skipTaskbar: true, alwaysOnTop: true, show: false,
     webPreferences: { preload: path.join(__dirname, "preload.js"), contextIsolation: true },
   });
-  win.setAlwaysOnTop(true, "floating");
+  win.setAlwaysOnTop(true);
   win.setIgnoreMouseEvents(true, { forward: true });
   win.webContents.on("console-message", (_e, level, message, line, source) => console.log(`[renderer:${level}] ${message} (${source}:${line})`));
-  win.webContents.on("did-fail-load", (_e, code, desc, url) => console.log(`[load-fail] ${code} ${desc} ${url}`));
+  win.webContents.on("did-fail-load", (_e, code, desc, url) => console.error(`[load-fail] ${code} ${desc} ${url}`));
+  win.webContents.on("did-finish-load", () => {
+    console.log("[main] did-finish-load, showing window");
+    if (settings.visible) {
+      win.show();
+      win.setAlwaysOnTop(true);
+    }
+  });
+  win.once("ready-to-show", () => {
+    console.log("[main] ready-to-show, showing window");
+    if (settings.visible) {
+      win.show();
+      win.setAlwaysOnTop(true);
+    }
+  });
   win.loadURL("app://damu/src/companion.html");
-  win.once("ready-to-show", () => { if (settings.visible) win.showInactive(); });
 }
 
 function fitToDisplay() {

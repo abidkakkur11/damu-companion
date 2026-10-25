@@ -12,8 +12,13 @@
   }
   html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; user-select: none; }
   #stage { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; }
-  #avatar { position: absolute; left: 0; bottom: 0; width: 100px; height: 210px; cursor: grab; will-change: transform; transform-origin: 50% 100%; }
-  #avatar.dragging { cursor: grabbing; }
+  #avatar {
+    position: absolute; left: 0; bottom: 0; width: 125px; height: 260px;
+    cursor: grab; will-change: transform; transform-origin: 50% 100%;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .32));
+    transition: filter .2s ease;
+  }
+  #avatar.dragging { cursor: grabbing; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .45)); }
   #sprite { width: 100%; height: 100%; display: block; pointer-events: none; }
 
   /* Speech bubble: soft clay/3D look to match the character render. */
