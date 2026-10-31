@@ -9,11 +9,23 @@ const faceImg = document.getElementById("faceImg");
 const ASSETS = "../assets";
 
 // Walking simulation parameters calibrated for realistic human stride
-const WALK_SPEED = 92; // px/s on desktop (casual stroll)
-const STRIDE_DISTANCE = 122; // px traveled per 16-frame cycle on screen (122 / 92 = 1.326s ~ 16 / 12fps)
-const WALK_ACCEL = 260; // px/s² smooth acceleration
-const WALK_DECEL = 320; // px/s² smooth deceleration
-const DISPLAY_HEIGHT = 260; // base on-screen height in CSS px
+const BASE_WALK_SPEED = 92; // px/s on desktop (casual stroll)
+const BASE_STRIDE_DISTANCE = 122; // px traveled per 16-frame cycle on screen (122 / 92 = 1.326s ~ 16 / 12fps)
+const BASE_WALK_ACCEL = 260; // px/s² smooth acceleration
+const BASE_WALK_DECEL = 320; // px/s² smooth deceleration
+const BASE_DISPLAY_HEIGHT = 260; // on-screen height in CSS px at size 1.0
+
+// User settings (pushed from the main process; see applySettings)
+let cfg = {
+  visible: true, walkSpeed: 1, size: 1, offscreenTrips: true,
+  audioEnabled: true, volume: 0.8, soundReminders: true, soundChatter: true, soundReactions: true,
+};
+// Derived values: speed scales the walk, size scales the sprite and its stride so feet never slide.
+let WALK_SPEED = BASE_WALK_SPEED;
+let WALK_ACCEL = BASE_WALK_ACCEL;
+let WALK_DECEL = BASE_WALK_DECEL;
+let STRIDE_DISTANCE = BASE_STRIDE_DISTANCE;
+let DISPLAY_HEIGHT = BASE_DISPLAY_HEIGHT;
 
 // Activity durations [min, max] seconds
 const STAND_FOR = [6, 12];
@@ -30,46 +42,46 @@ const OFFSCREEN_AWAY_FOR = [14, 26]; // seconds Damu stays away outside the scre
 const LINES = {
   // Pose: "looking-up" (Looking up parched, asking for water)
   water: [
-    "Time for some water!",
-    "Vellam kudichille? Illenkil ippo kudikku!",
-    "Thondha vatti poyo? Oru glass vellam kudi!",
-    "Hydration check - grab a glass!",
-    "Vellam kudikkaan marakkalle, ketto!"
+    "Daa KnaPPaa Poi vellam kudiyeda..",
+    "2 ounce dashamoolam edukkatte?",
+    "Sivanane.. sathyam.. vellam kudichillel prashnam aavum",
+    "Ayyoo angane parnajooda.. vellam kudikk",
+    "Vellam kuddichillel njan S kathi edukkum.."
   ],
 
   // Pose: "warning" (Hands raised with finger pointing, warning to take a break)
   break: [
-    "Onn ezhunnettu nadakku, ketto.",
+    "onn Mallayya varunnonn nokkikke..",
     "Dey kann potti povum. Purathekk nokk",
-    "Break time! Kaal onnu neettu.",
-    "Screen-ilekku ithra neram nokkalle, kannu pokum!",
-    "Posture shari aakku, nere irikk!"
+    "Chilar angana paramupille.. chath paniyedukkum.. Break edukkedey..",
+    "Veruthe enne veendum jayilil kettikkaruth..",
+    "Daa Knappaa nere irikkeda.."
   ],
 
   // Pose: "nail-look" / "looking" (Returned from outside the screen to check on you)
   returned: [
-    "Njan thirichu ethi! Entha pani?",
-    "Pani okke kazhinjo? Njan ivide und!",
-    "Oru chaaya kudichu vannatha. Nee kudicho?",
-    "Entha ithra busy? Oru break edukkam aayirunnu!",
-    "Njan vannu ketto! Everything alright?"
+    "2 ounce dashamoolam..",
+    "Nokki nikkathe vegam paniyedukkedey..",
+    "Kannadayil entho gothan aan plan..",
+    "Chila muthalalimar okke angana paramu pille...",
+    "Muthalali.. enikk kurach ottakk samsarikkanund.."
   ],
 
   // Pose: "looking" (Curious head tilted peeking at your work)
   curious: [
-    "Entha ithra sradhichu nokkunne?",
-    "Njanum onnu nokkatte?",
-    "Heavy work aanallo!"
+    "Ath enthada nale computer ille?",
+    "Ente illatha budhiyil oru idea thonnunnund..",
+    "Kand kanuo entho.. Sivane.."
   ],
 
   // Poses: "neutral", "nail-look", "looking", "looking-up" (Idle thoughts)
   chatter: [
-    "Entha pani? Njan ivide thanne und, ketto.",
-    "Screen-ilekku ithra neram nokkalle, kannu pokum!",
-    "Chaya kudikkan neram aayo?",
+    "Eni nammal enth seyyum Mallayya?",
+    "Screen-ilekku ithra neram nokkalle, kannu nja kuthi pottikkum!",
+    "Poi chaya kudikkedey",
     "Sivane.. itheth posture..?",
     "Pani okke kazhinjo?",
-    "Oru nimisham, kaal onnu neettu.",
+    "Nere irikkeda..",
     "Njan ivide thanne und, vilichal mathi.",
     "Busy aanallo, alle?",
     "Vellam kudikkaan marakkalle!"
@@ -84,17 +96,39 @@ const LINES = {
 
   // Pose: "apologies" (Hands folded apologetically on single click)
   click: [
-    "Njan ivide thanne und, ketto!",
-    "Aha, entha vishesham?",
-    "Njan pokoola..!"
+    "Njan pokoola..",
+    "ayyo.. angne paranjooda..",
+    "Njan pokoolann alle paranjath..!"
   ],
 
   // Pose: "angry" (Clenched fists with tremor on double click)
   dblclick: [
-    "Njan pokoolanna alle prnje..!",
-    "Enthina enne ingane thattunne?!",
-    "Pani edukkade, veruthe irikkathe!"
+    "Njan pokoolanna alle prnjath..!",
+    "Ayyoo angane paranjooda...",
+    "Sivane..."
   ]
+};
+
+// ============================================================================
+// SOUNDS: which clips in assets/audio/ (.wav) play for which event.
+// Each event picks one clip at random from its list. Edit freely.
+// ============================================================================
+const SOUNDS = {
+  intro: ["intro"],                           // launch greeting
+  remind: ["remind"],                         // water / break reminder
+  click: ["ayyo"],                            // single click
+  dblclick: ["pedi"],                         // double click (angry)
+  returned: ["friends", "nale"],              // back from an errand
+  chatter: ["nale","intro", "friends", "protection"], // random remarks
+};
+
+SOUNDS.preview = [...new Set(Object.values(SOUNDS).flat())]; // "Play test sound" in Settings
+// Which Audio toggle in Settings controls each event.
+const SOUND_GROUP = {
+  intro: "soundChatter", chatter: "soundChatter", returned: "soundChatter",
+  remind: "soundReminders",
+  click: "soundReactions", dblclick: "soundReactions",
+  preview: "audioEnabled",
 };
 
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
@@ -122,6 +156,15 @@ let lastWalkFrameIdx = -1;
 let isExiting = false; // true when walking out past screen border
 let returnAt = 0; // timestamp when Damu starts returning
 let returnTargetX = 0; // landing X coordinate on screen
+let pending = null; // { run } - something to do the moment Damu is back on screen
+let leaving = false; // true while walking out because the companion was switched off
+
+const isTravelling = () => mode === "return_walk" || (mode === "walk" && isExiting);
+// Anything that needs Damu on screen while he is away or mid-trip waits for him to arrive.
+function summon(job) {
+  pending = job;
+  if (mode === "offscreen") startReturnWalk(performance.now());
+}
 
 // Transform & positioning state
 let x = 400; // horizontal center
@@ -293,22 +336,24 @@ function startOffscreenWalk() {
 }
 
 // Walk back into the screen from outside
-function startReturnWalk(now) {
+function startReturnWalk(now, fromLeft = Math.random() < 0.5) {
   mode = "return_walk";
   isExiting = false;
   walkStopping = false;
+  currentWalkSpeed = 0;
   lastWalkFrameIdx = -1;
+  setPose("neutral", { pop: false }); // size the sprite before measuring it
   const half = W() / 2;
 
-  // Decide which side to enter from (50/50 left or right)
-  const enterFromLeft = Math.random() < 0.5;
+  const enterFromLeft = fromLeft;
   if (enterFromLeft) {
-    x = -half - 30;
+    x = -half - 40;
     targetDir = 1;
   } else {
-    x = window.innerWidth + half + 30;
+    x = window.innerWidth + half + 40;
     targetDir = -1;
   }
+  avatar.style.visibility = "visible";
   facingScale = targetDir;
   dir = targetDir;
 
@@ -320,6 +365,12 @@ function startReturnWalk(now) {
 // Triggered when Damu finishes walking back onto the screen
 function onDamuReturned() {
   standIdle();
+  if (pending) {
+    const job = pending;
+    pending = null;
+    job.run();
+    return;
+  }
   const choices = ["water", "break", "curious", "returned"];
   const choice = pick(choices);
 
@@ -352,6 +403,7 @@ function onDamuReturned() {
     setPose("nail-look");
     say(pick(LINES.returned), { face: "nail-look", ms: 6000 });
   }
+  sfx(choice === "water" || choice === "break" ? "remind" : "returned");
 }
 
 function inspectNails() {
@@ -383,7 +435,7 @@ function decide(now) {
 
   // Choose next activity:
   const r = Math.random();
-  if (r < 0.22) {
+  if (r < 0.22 && cfg.offscreenTrips) {
     // 22% chance: Walk off-screen to run errands, grab tea, and return with a reminder/question
     startOffscreenWalk();
   } else if (r < 0.50) {
@@ -456,12 +508,50 @@ function hideBubble() {
   }
 }
 
-// ----- Audio SFX -----
-function sfx(name) {
-  try {
-    const a = new Audio(`${ASSETS}/audio/${name}.mp3`);
-    a.play().catch(() => {});
-  } catch {}
+// ----- Audio -----
+// Decoded once at startup, played one clip at a time (a new clip cuts off the previous one).
+const audioCtx = new AudioContext();
+const clips = {}; // name -> AudioBuffer
+let nowPlaying = null;
+let lastClip = "";
+
+async function loadAudio() {
+  await Promise.all([...new Set(Object.values(SOUNDS).flat())].map(async (name) => {
+    try {
+      const res = await fetch(`${ASSETS}/audio/${name}.wav`);
+      if (!res.ok) return;
+      clips[name] = await audioCtx.decodeAudioData(await res.arrayBuffer());
+    } catch (err) {
+      console.error(`Failed to load audio "${name}":`, err);
+    }
+  }));
+  console.log(`[companion] Loaded ${Object.keys(clips).length} audio clips`);
+}
+
+const masterGain = audioCtx.createGain();
+masterGain.connect(audioCtx.destination);
+
+function stopAudio() {
+  try { nowPlaying?.stop(); } catch {}
+  nowPlaying = null;
+}
+
+// Plays a random clip from the event's pool, never the same one twice in a row.
+function sfx(event) {
+  if (!cfg.audioEnabled || !cfg[SOUND_GROUP[event]]) return;
+  const pool = (SOUNDS[event] || []).filter((n) => clips[n]);
+  if (!pool.length) return;
+  const fresh = pool.filter((n) => n !== lastClip);
+  const name = pick(fresh.length ? fresh : pool);
+  lastClip = name;
+  stopAudio();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  const src = audioCtx.createBufferSource();
+  src.buffer = clips[name];
+  src.connect(masterGain);
+  src.onended = () => { if (nowPlaying === src) nowPlaying = null; };
+  src.start();
+  nowPlaying = src;
 }
 
 // ----- Reminders, Chatter & Reactions -----
@@ -477,18 +567,19 @@ function celebrate() {
 }
 
 function remind({ type }) {
-  if (busy) return;
+  if (busy || !cfg.visible) return;
+
+  // Away or mid-trip: bring him back in, then deliver the reminder when he arrives.
+  if (mode === "offscreen" || isTravelling()) {
+    summon({ run: () => remind({ type }) });
+    return;
+  }
+
   busy = true;
-  if (mode === "walk" || walkStopping || mode === "return_walk") {
+  if (mode === "walk" || walkStopping) {
     mode = "stand";
     walkStopping = false;
     currentWalkSpeed = 0;
-  }
-
-  // If Damu is offscreen when reminder arrives, bring him back in immediately!
-  if (mode === "offscreen") {
-    startReturnWalk(performance.now());
-    return;
   }
 
   const later = () => {
@@ -508,10 +599,12 @@ function remind({ type }) {
       { label: "Later", alt: true, onClick: later }
     ];
     say(pick(LINES.water), { face: "looking-up", buttons });
+    sfx("remind");
   } else {
     // Break / posture reminder
     setPose("warning");
     doHop(20, 0.36);
+    sfx("remind");
     const buttons = [
       { label: "Done", onClick: celebrate },
       { label: "Later", alt: true, onClick: later }
@@ -522,8 +615,8 @@ function remind({ type }) {
 }
 
 function chatter() {
-  if (busy || dragging || angryUntil > performance.now() || mode === "offscreen") return;
-  if (mode === "walk" || walkStopping || mode === "return_walk") {
+  if (busy || dragging || angryUntil > performance.now() || mode === "offscreen" || isTravelling()) return;
+  if (mode === "walk" || walkStopping) {
     mode = "stand";
     walkStopping = false;
     currentWalkSpeed = 0;
@@ -537,13 +630,14 @@ function chatter() {
     setPose(poseKey);
     say(pick(LINES.chatter), { face: poseKey, ms: 6500 });
   }
+  sfx("chatter");
   nextAt = performance.now() + 7000;
 }
 
 function react(kind) {
-  if (busy || mode === "offscreen") return;
+  if (busy || mode === "offscreen" || isTravelling()) return;
   lastUserInteraction = performance.now();
-  if (mode === "walk" || walkStopping || mode === "return_walk" || mode === "hover_nail") {
+  if (mode === "walk" || walkStopping || mode === "hover_nail") {
     mode = "stand";
     walkStopping = false;
     currentWalkSpeed = 0;
@@ -553,14 +647,14 @@ function react(kind) {
     // Startled reaction
     setPose("apologies");
     doHop(26, 0.36);
-    sfx("pokoola");
+    sfx("click");
     say(pick(LINES.click), { face: "apologies", ms: 3500 });
     nextAt = performance.now() + 4000;
   } else if (kind === "dblclick") {
     // Angry clenched fists with tremor
     setPose("angry");
     angryUntil = performance.now() + 2800;
-    sfx("pokoolanna");
+    sfx("dblclick");
     say(pick(LINES.dblclick), { face: "angry", ms: 4000 });
     nextAt = performance.now() + 4500;
   }
@@ -570,8 +664,69 @@ function react(kind) {
 window.damu.onRemind(remind);
 window.damu.onChatter(chatter);
 window.damu.onSay(({ text }) => {
-  setPose("looking");
-  say(text, { face: "looking" });
+  const run = () => {
+    setPose("looking");
+    say(text, { face: "looking" });
+  };
+  if (mode === "offscreen" || isTravelling()) {
+    if (!pending) summon({ run }); // never displace a waiting reminder
+  } else run();
+});
+
+// ----- Settings -----
+function applySettings(s) {
+  const prevSize = cfg.size;
+  cfg = { ...cfg, ...s };
+  WALK_SPEED = BASE_WALK_SPEED * cfg.walkSpeed;
+  WALK_ACCEL = BASE_WALK_ACCEL * cfg.walkSpeed;
+  WALK_DECEL = BASE_WALK_DECEL * cfg.walkSpeed;
+  STRIDE_DISTANCE = BASE_STRIDE_DISTANCE * cfg.size;
+  DISPLAY_HEIGHT = BASE_DISPLAY_HEIGHT * cfg.size;
+  masterGain.gain.value = cfg.volume;
+  if (!cfg.audioEnabled) stopAudio();
+  if (cfg.size !== prevSize && poses[currentPose]) {
+    // Resize the sprite right away
+    if (walkBitmaps.length && (mode === "walk" || mode === "return_walk" || walkStopping)) {
+      renderWalkFrame(Math.max(0, lastWalkFrameIdx));
+    } else {
+      renderCurrentPose();
+    }
+  }
+}
+window.damu.onSettings(applySettings);
+window.damu.onPreviewSound(() => sfx("preview"));
+
+// Companion switched off: walk out, then let the main process hide the window.
+window.damu.onLeave(() => {
+  pending = null;
+  busy = false;
+  dragging = false;
+  jump = null;
+  angryUntil = 0;
+  hideBubble();
+  if (mode === "offscreen") {
+    returnAt = Infinity;
+    window.damu.leftScreen();
+    return;
+  }
+  leaving = true;
+  startOffscreenWalk();
+});
+
+// Companion switched back on: walk in from a screen edge.
+window.damu.onEnter(() => {
+  leaving = false;
+  const greet = { run: () => {
+    setPose("looking");
+    say("Namaskaaram!", { face: "looking", ms: 4000 });
+    sfx("intro");
+  } };
+  if (mode === "offscreen") {
+    pending = greet;
+    startReturnWalk(performance.now());
+  } else if (isTravelling()) {
+    pending = greet; // already on his way; greet on arrival
+  }
 });
 
 // ----- Click-through Pixel Hit-Testing -----
@@ -619,7 +774,8 @@ let lastDragX = 0;
 let dragVelocity = 0;
 
 avatar.addEventListener("mousedown", (e) => {
-  if (mode === "walk" || walkStopping || mode === "return_walk" || mode === "hover_nail") {
+  if (isTravelling()) return;
+  if (mode === "walk" || walkStopping || mode === "hover_nail") {
     mode = "stand";
     walkStopping = false;
     currentWalkSpeed = 0;
@@ -705,7 +861,8 @@ function frame(now) {
       const curFrame = Math.floor(walkCycleProgress * walkBitmaps.length) % walkBitmaps.length;
       // Complete stride onto grounded stance (frames 0, 1, 8, 9 or stopped)
       if (currentWalkSpeed < 14 && (curFrame === 0 || curFrame === 1 || curFrame === 8 || curFrame === 9 || currentWalkSpeed <= 1)) {
-        standIdle();
+        if (mode === "return_walk") onDamuReturned();
+        else standIdle();
       }
     } else {
       currentWalkSpeed = Math.min(WALK_SPEED, currentWalkSpeed + WALK_ACCEL * dt);
@@ -715,27 +872,27 @@ function frame(now) {
 
     if (isExiting) {
       // Exiting off-screen: continue walking past screen boundaries
-      if (targetDir < 0 && x < -half - 50) {
+      if ((targetDir < 0 && x < -half - 20) || (targetDir > 0 && x > window.innerWidth + half + 20)) {
         mode = "offscreen";
         isExiting = false;
         currentWalkSpeed = 0;
-        returnAt = now + rand(OFFSCREEN_AWAY_FOR);
-        hideBubble();
-        window.damu.setIgnoreMouse(true);
-      } else if (targetDir > 0 && x > window.innerWidth + half + 50) {
-        mode = "offscreen";
-        isExiting = false;
-        currentWalkSpeed = 0;
-        returnAt = now + rand(OFFSCREEN_AWAY_FOR);
+        avatar.style.visibility = "hidden"; // fully gone, no shadow bleeding at the edge
+        // Companion switched off: stay parked and tell the main process the window can hide.
+        // Something is waiting for him (reminder, "Say hi"): come straight back.
+        returnAt = leaving ? Infinity : now + (pending ? 400 : rand(OFFSCREEN_AWAY_FOR));
+        if (leaving) {
+          leaving = false;
+          window.damu.leftScreen();
+        }
         hideBubble();
         window.damu.setIgnoreMouse(true);
       }
     } else if (mode === "return_walk") {
-      // Returning into screen: stop upon reaching target area
-      if ((targetDir > 0 && x >= returnTargetX) || (targetDir < 0 && x <= returnTargetX)) {
-        x = returnTargetX;
-        currentWalkSpeed = 0;
-        onDamuReturned();
+      // Returning into screen: start braking in time to stop on the landing spot
+      if (!walkStopping) {
+        const remaining = (returnTargetX - x) * targetDir;
+        const brakeDist = (currentWalkSpeed * currentWalkSpeed) / (2 * WALK_DECEL);
+        if (remaining <= brakeDist + 1) walkStopping = true;
       }
     } else {
       // Normal walking: screen boundary turnaround check
@@ -767,7 +924,7 @@ function frame(now) {
     walkDistance += Math.abs(stepMove);
 
     // Keep avatar strictly inside screen viewport only if not exiting or returning
-    if (!isExiting && mode !== "return_walk") {
+    if (!isExiting && mode !== "return_walk" && mode !== "offscreen") {
       x = Math.max(half, Math.min(window.innerWidth - half, x));
     }
 
@@ -868,11 +1025,26 @@ function frame(now) {
 }
 
 // ----- Bootstrap -----
-load().then(() => {
+Promise.all([load().then(() => loadAudio()), window.damu.getSettings()]).then(([, s]) => {
   console.log("[companion] Poses and walk animation loaded successfully! Starting animation loop...");
-  x = Math.max(200, window.innerWidth - 320);
-  standIdle();
-  say("Njan ivide und, ketto!", { face: "looking", ms: 5000 });
+  applySettings(s);
+  if (!cfg.visible) {
+    // Switched off: stay parked off-screen until the companion is enabled.
+    setPose("neutral", { pop: false });
+    mode = "offscreen";
+    returnAt = Infinity;
+    x = -500;
+    avatar.style.visibility = "hidden";
+  } else {
+    // Walk in from the right edge instead of popping into existence.
+    pending = { run: () => {
+      setPose("looking");
+      say("Namaskaaram!", { face: "looking", ms: 5000 });
+      sfx("intro");
+    } };
+    startReturnWalk(performance.now(), false);
+    returnTargetX = Math.max(200, window.innerWidth - 320);
+  }
   requestAnimationFrame(frame);
 }).catch((err) => {
   console.error("Failed to load Damu assets:", err);

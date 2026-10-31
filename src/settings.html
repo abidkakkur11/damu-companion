@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+<title>Damu</title>
+<style>
+  :root {
+    --bg: #fbf6e6; --panel: #fffdf3; --side: #f1e6c4; --ink: #3a3417; --muted: #7a6f45;
+    --line: #e4d7a8; --green: #2e7d32; --green-hi: #55b45a; --gold: #f5b53b; --danger: #b3321f;
+    --track: #e4d7a8; --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1d1a10; --panel: #27231469; --side: #181509; --ink: #f3ecd2; --muted: #b3a77a;
+      --line: #3b3520; --track: #4a4328; --green: #55b45a; --green-hi: #6fcf74;
+    }
+    .card { background: #2a2615; }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { display: flex; background: var(--bg); color: var(--ink); font: 14px/1.5 "Segoe UI", "Nirmala UI", sans-serif; user-select: none; }
+
+  /* Sidebar */
+  aside { width: 220px; flex: none; background: var(--side); padding: 22px 14px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 18px; }
+  .brand img { width: 40px; height: 40px; border-radius: 10px; }
+  .brand b { font-size: 18px; display: block; line-height: 1.1; }
+  .brand span { font-size: 12px; color: var(--muted); }
+  nav button {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 12px; border: 0; border-radius: 10px;
+    background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+  }
+  nav button:hover { background: rgba(0, 0, 0, .06); }
+  nav button.active { background: var(--green); color: #fff; font-weight: 600; }
+  nav .sep { height: 1px; background: var(--line); margin: 10px 4px; }
+  nav svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Content */
+  main { flex: 1; overflow-y: auto; padding: 28px 36px 40px; }
+  section { display: none; max-width: 680px; }
+  section.active { display: block; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .lead { color: var(--muted); margin: 0 0 22px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 26px 0 8px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row .t { font-weight: 600; }
+  .row .d { color: var(--muted); font-size: 12.5px; }
+  .row.off { opacity: .45; pointer-events: none; }
+  .ctl { display: flex; align-items: center; gap: 12px; flex: none; }
+  .out { min-width: 64px; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+
+  /* Controls */
+  .switch { position: relative; width: 44px; height: 24px; flex: none; }
+  .switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+  .switch i { position: absolute; inset: 0; background: var(--track); border-radius: 24px; transition: background .15s; }
+  .switch i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .3); transition: transform .15s; }
+  .switch input:checked + i { background: var(--green); }
+  .switch input:checked + i::after { transform: translateX(20px); }
+  .switch input:focus-visible + i { outline: 2px solid var(--gold); outline-offset: 2px; }
+  input[type=range] { width: 200px; accent-color: var(--green); cursor: pointer; }
+  select {
+    font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer;
+  }
+  .btn {
+    font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 8px 16px; cursor: pointer;
+    background: var(--green); color: #fff;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn.alt { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn.danger { color: var(--danger); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* Prose pages */
+  .prose { user-select: text; }
+  .prose h3 { margin: 22px 0 4px; font-size: 15px; }
+  .prose p, .prose li { margin: 6px 0; }
+  .prose ul { padding-left: 20px; }
+  .prose code { background: rgba(0, 0, 0, .07); padding: 1px 6px; border-radius: 5px; font-size: 12.5px; word-break: break-all; }
+  .about-hero { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+  .about-hero img { width: 84px; height: 84px; border-radius: 20px; box-shadow: 0 6px 18px rgba(0, 0, 0, .2); }
+  .about-hero h1 { margin: 0; }
+  .kv { display: grid; grid-template-columns: 130px 1fr; gap: 6px 14px; padding: 14px 18px; user-select: text; }
+  .kv dt { color: var(--muted); }
+  .kv dd { margin: 0; }
+
+  #toast {
+    position: fixed; right: 24px; bottom: 20px; background: var(--green); color: #fff; padding: 7px 14px; border-radius: 20px;
+    font-weight: 600; font-size: 13px; opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: none; }
+
+  @media (max-width: 860px) { aside { width: 64px; } .brand div, nav button span { display: none; } nav button { justify-content: center; } main { padding: 22px 18px; } }
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand">
+    <img src="../assets/icon.png" alt="">
+    <div><b>Damu</b><span id="ver"></span></div>
+  </div>
+  <nav id="nav">
+    <button data-page="general" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>General</span></button>
+    <button data-page="reminders"><svg viewBox="0 0 24 24"><path d="M12 2.5s6 6.2 6 10.5a6 6 0 0 1-12 0C6 8.700 12 2.500 12 2.500z"/></svg><span>Reminders</span></button>
+    <button data-page="companion"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.500"/><path d="M5 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg><span>Companion</span></button>
+    <button data-page="audio"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.500 8.500a5 5 0 0 1 0 7M18.500 5.500a9 9 0 0 1 0 13"/></svg><span>Audio</span></button>
+    <div class="sep"></div>
+    <button data-page="about"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.500"/><path d="M12 16v-5M12 8h.01"/></svg><span>About</span></button>
+    <button data-page="privacy"><svg viewBox="0 0 24 24"><path d="M12 22s8-3.500 8-10V5l-8-3-8 3v7c0 6.500 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>Privacy Policy</span></button>
+  </nav>
+</aside>
+
+<main>
+  <!-- GENERAL -->
+  <section id="general" class="active">
+    <h1>General</h1>
+    <p class="lead">Damu lives on your desktop and keeps you hydrated. Changes apply instantly.</p>
+    <div class="card">
+      <div class="row">
+        <div><div class="t">Show Damu on screen</div><div class="d">Off: he walks off the screen and stays away until you turn this on.</div></div>
+        <label class="switch"><input type="checkbox" data-key="visible" aria-label="Show Damu on screen"><i></i></label>
+      </div>
+      <div class="row">
+        <div><div class="t">Start with Windows</div><div class="d">Launch Damu automatically when you sign in.</div></div>
+        <label class="switch"><input type="checkbox" id="login" aria-label="Start with Windows"><i></i></label>
+      </div>
+      <div class="row">
+        <div><div class="t">Pause all reminders</div><div class="d">Water and break reminders stop until you switch this off.</div></div>
+        <label class="switch"><input type="checkbox" data-key="paused" aria-label="Pause all reminders"><i></i></label>
+      </div>
+    </div>
+
+    <h2>Try it</h2>
+    <div class="card">
+      <div class="actions">
+        <button class="btn alt" data-action="say-hi" data-requires="visible">Say hi</button>
+        <button class="btn alt" data-action="remind" data-arg="water" data-requires="visible">Water reminder now</button>
+        <button class="btn alt" data-action="remind" data-arg="break" data-requires="visible">Break reminder now</button>
+      </div>
+    </div>
+
+    <h2>Reset</h2>
+    <div class="card">
+      <div class="row">
+        <div><div class="t">Restore default settings</div><div class="d">Puts every option back to how it was on first launch.</div></div>
+        <button class="btn alt danger" id="reset">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- REMINDERS -->
+  <section id="reminders">
+    <h1>Reminders</h1>
+    <p class="lead">Choose how often Damu nudges you. Reminders are not medical advice.</p>
+    <div class="card" data-dim="paused">
+      <div class="row">
+        <div><div class="t">Drink water</div><div class="d">Remind me to drink water.</div></div>
+        <label class="switch"><input type="checkbox" data-key="waterEnabled" aria-label="Water reminders"><i></i></label>
+      </div>
+      <div class="row" data-requires="waterEnabled">
+        <div><div class="t">Water every</div></div>
+        <div class="ctl"><input type="range" min="1" max="180" step="1" data-key="waterMinutes" data-commit="change" data-fmt="min" aria-label="Water interval in minutes"><span class="out" data-out="waterMinutes"></span></div>
+      </div>
+      <div class="row">
+        <div><div class="t">Take a break</div><div class="d">Remind me to stand up, stretch and rest my eyes.</div></div>
+        <label class="switch"><input type="checkbox" data-key="breakEnabled" aria-label="Break reminders"><i></i></label>
+      </div>
+      <div class="row" data-requires="breakEnabled">
+        <div><div class="t">Break every</div></div>
+        <div class="ctl"><input type="range" min="1" max="180" step="1" data-key="breakMinutes" data-commit="change" data-fmt="min" aria-label="Break interval in minutes"><span class="out" data-out="breakMinutes"></span></div>
+      </div>
+    </div>
+
+    <h2>Chatter</h2>
+    <div class="card">
+      <div class="row">
+        <div><div class="t">Damu talks on his own</div><div class="d">How often he makes a random remark between reminders.</div></div>
+        <select data-key="chatter" aria-label="Chatter frequency">
+          <option value="often">Often (every 2–4 min)</option>
+          <option value="normal">Normal (every 4–8 min)</option>
+          <option value="rare">Rare (every 10–15 min)</option>
+          <option value="off">Off</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPANION -->
+  <section id="companion">
+    <h1>Companion</h1>
+    <p class="lead">How Damu looks and moves around your screen.</p>
+    <div class="card">
+      <div class="row">
+        <div><div class="t">Walking speed</div><div class="d">How fast he strolls.</div></div>
+        <div class="ctl"><input type="range" min="0.4" max="2.5" step="0.1" data-key="walkSpeed" data-fmt="x" aria-label="Walking speed"><span class="out" data-out="walkSpeed"></span></div>
+      </div>
+      <div class="row">
+        <div><div class="t">Size</div><div class="d">Scale Damu up or down.</div></div>
+        <div class="ctl"><input type="range" min="0.6" max="1.6" step="0.05" data-key="size" data-fmt="pct" aria-label="Size"><span class="out" data-out="size"></span></div>
+      </div>
+      <div class="row">
+        <div><div class="t">Wander off-screen</div><div class="d">Now and then he walks out of the screen and comes back with a question.</div></div>
+        <label class="switch"><input type="checkbox" data-key="offscreenTrips" aria-label="Wander off-screen"><i></i></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUDIO -->
+  <section id="audio">
+    <h1>Audio</h1>
+    <p class="lead">Damu's voice clips. Each event plays a random clip from its set.</p>
+    <div class="card">
+      <div class="row">
+        <div><div class="t">Enable audio</div><div class="d">Master switch for all of Damu's sounds.</div></div>
+        <label class="switch"><input type="checkbox" data-key="audioEnabled" aria-label="Enable audio"><i></i></label>
+      </div>
+      <div class="row" data-requires="audioEnabled">
+        <div><div class="t">Volume</div></div>
+        <div class="ctl"><input type="range" min="0" max="1" step="0.05" data-key="volume" data-fmt="pct" aria-label="Volume"><span class="out" data-out="volume"></span></div>
+      </div>
+    </div>
+
+    <h2>Play sounds for</h2>
+    <div class="card">
+      <div class="row" data-requires="audioEnabled">
+        <div><div class="t">Reminders</div><div class="d">Water and break reminders.</div></div>
+        <label class="switch"><input type="checkbox" data-key="soundReminders" aria-label="Sound for reminders"><i></i></label>
+      </div>
+      <div class="row" data-requires="audioEnabled">
+        <div><div class="t">Greetings &amp; chatter</div><div class="d">Hello on launch, random remarks, coming back from a trip.</div></div>
+        <label class="switch"><input type="checkbox" data-key="soundChatter" aria-label="Sound for chatter"><i></i></label>
+      </div>
+      <div class="row" data-requires="audioEnabled">
+        <div><div class="t">Reactions</div><div class="d">When you click or double-click him.</div></div>
+        <label class="switch"><input type="checkbox" data-key="soundReactions" aria-label="Sound for reactions"><i></i></label>
+      </div>
+    </div>
+    <h2>Test</h2>
+    <div class="card"><div class="actions"><button class="btn" data-action="preview-sound" data-requires="audioEnabled visible">Play a test sound</button></div></div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="prose">
+    <div class="about-hero">
+      <img src="../assets/icon.png" alt="">
+      <div><h1>Damu</h1><div class="lead" style="margin:0">Your desktop companion for water and break reminders.</div></div>
+    </div>
+    <div class="card">
+      <dl class="kv">
+        <dt>Version</dt><dd id="aboutVer"></dd>
+        <dt>Author</dt><dd>abidkakkur11</dd>
+        <dt>License</dt><dd>MIT License</dd>
+        <dt>Source code</dt><dd>github.com/abidkakkur11/damu-companion</dd>
+        <dt>Built with</dt><dd id="aboutTech"></dd>
+      </dl>
+    </div>
+    <h3>What is Damu?</h3>
+    <p>Damu is a small animated character who wanders around your desktop, reminds you to drink water and take breaks, and reacts when you click or drag him. He speaks in Malayalam and plays short voice clips.</p>
+    <h3>Good to know</h3>
+    <ul>
+      <li>Damu sits on top of your windows but never blocks them: clicks pass straight through everywhere except on Damu himself.</li>
+      <li>Find him in the system tray (the <code>^</code> arrow next to the clock) to open Settings, pause reminders or quit.</li>
+      <li>Closing this window doesn't quit Damu. Use <em>Quit Damu</em> from the tray menu.</li>
+      <li>Reminders are friendly nudges, not medical advice.</li>
+    </ul>
+    <h3>License</h3>
+    <p>Damu is free software released under the MIT License. Copyright © 2026 abidkakkur11. It is provided "as is", without warranty of any kind.</p>
+  </section>
+
+  <!-- PRIVACY -->
+  <section id="privacy" class="prose">
+    <h1>Privacy Policy</h1>
+    <p class="lead">Last updated: 31 October 2026</p>
+    <p><b>The short version:</b> Damu works entirely on your computer. It collects nothing, sends nothing and has no accounts.</p>
+
+    <h3>Data we collect</h3>
+    <p>None. Damu has no analytics, telemetry, crash reporting, advertising or user accounts. The author never receives any information about you or how you use the app.</p>
+
+    <h3>Data stored on your device</h3>
+    <p>Damu saves your preferences (the options in this window) in a single file, <code>settings.json</code>, in the app's data folder:</p>
+    <p><code id="dataPath"></code></p>
+    <p>It contains only settings such as reminder intervals, speed, size and audio options. Delete the file or use <em>Reset</em> to clear it. Uninstalling Damu removes the program; you can delete the data folder to remove the settings too.</p>
+    <div class="actions" style="padding-left:0"><button class="btn alt" id="openData">Open data folder</button></div>
+
+    <h3>Network access</h3>
+    <p>Damu makes no network connections. All images, animations and voice clips are bundled with the app and loaded from your disk. There is no auto-update check.</p>
+
+    <h3>What Damu can see</h3>
+    <ul>
+      <li>Damu draws a transparent window over your screen. It only reacts to your mouse pointer while it is over Damu himself (to let you click, drag and hover over him, and to make him glance toward the pointer). Pointer position is used on the spot and never stored or sent anywhere.</li>
+      <li>Damu does <b>not</b> take screenshots, record the screen, log keystrokes, read the clipboard, or access your files, windows, camera or microphone.</li>
+    </ul>
+
+    <h3>Start with Windows</h3>
+    <p>If you turn this on, Damu registers itself as a sign-in item for your Windows account so it starts when you log in. Turning it off removes that entry.</p>
+
+    <h3>Third parties and children</h3>
+    <p>No data is shared with any third party, because none is collected. Since Damu collects no personal information from anyone, it collects none from children either.</p>
+
+    <h3>Changes to this policy</h3>
+    <p>If a future version changes how Damu handles data, this page will be updated in that release and the date above will change.</p>
+  </section>
+</main>
+
+<div id="toast" role="status" aria-live="polite">Saved</div>
+<script src="settings.js"></script>
+</body>
+</html>

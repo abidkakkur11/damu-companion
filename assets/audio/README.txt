@@ -1,4 +1,10 @@
-Drop sound files here (mp3). Missing files are ignored.
+Sound clips (.wav) live here. Which clip plays for which event is set in the
+SOUNDS table at the top of src/companion.js. Each event picks one at random from
+its list, never the same clip twice in a row. Missing files are ignored.
 
-  pokoola.mp3      played on a single click  ("Njan pokoola..!")
-  pokoolanna.mp3   played on a double click ("Njan pokoolanna alle prnje..!")
+  intro       launch greeting
+  remind      water / break reminder
+  click       single click
+  dblclick    double click
+  returned    back from an errand
+  chatter     random remarks
