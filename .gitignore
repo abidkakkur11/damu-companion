@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
 
-# Build and temporary files
+# Build output and temporary files
 dist/
 .work/
 
@@ -11,6 +11,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Operating System Files
+# Editors and OS files
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db

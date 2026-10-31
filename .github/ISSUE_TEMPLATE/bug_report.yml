@@ -1,0 +1,26 @@
+name: Bug report
+description: Something in Damu isn't working
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you see instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open Settings\n2. ..."
+  - type: input
+    id: version
+    attributes:
+      label: Damu version
+      description: Shown in Settings > About.
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 23H2
