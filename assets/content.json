@@ -1,0 +1,104 @@
+{
+  "_help": [
+    "Everything Damu says and plays lives in this file. Audio names refer to files in assets/audio/ (.wav or .mp3).",
+    "dialogues: Damu comes to you, shows the text and plays its audio. Add as many as you like.",
+    "  Optional per dialogue: \"pose\" (neutral, nail-look, looking, looking-up, warning, apologies) and",
+    "  \"action\" after OK (cheer, run). Leave them out to pick at random.",
+    "ok: the button label, and the audio played when the user clicks it.",
+    "mouse: text and/or audio for click, dblclick, dragStart, drop and hover. Text is optional.",
+    "goodbye: played (text + audio) when Damu is switched off and walks away."
+  ],
+  "greeting": {
+    "text": "ഞാൻ ദശമൂലം ദാമു.. എന്നെ വിശ്വസിക്കാം..",
+    "audio": "intro"
+  },
+  "goodbye": {
+    "text": "ഇന്നിനി വയ്യ.. ബാക്കി നാളെ വന്ന് വാങ്ങിക്കാം..",
+    "audio": "tomorrow"
+  },
+  "dialogues": [
+    {
+      "text": "ഞങ്ങൾ പഴയ ഫ്രണ്ട്സാ.. ഉറക്കം വന്നോണ്ട് തോളിൽ ഇട്ടതാ..",
+      "audio": "friends"
+    },
+    {
+      "text": "ചില മുതലാളിമാർ ഒക്കെ അങ്ങനാ പരമു പിള്ളേ..",
+      "audio": "paramu"
+    },
+    {
+      "text": "ചാടി എഴുന്നേറ്റ് പഞ്ചായത്ത് ഗ്രൌണ്ട് വഴി 2 റൌണ്ട് ഓടി. ഒന്ന് പോടോ..",
+      "audio": "run"
+    },
+    {
+      "text": "നീയൊക്കെ ഈ ധാരാവി എന്ന് കേട്ടിട്ടുണ്ടോടാ..?",
+      "audio": "dharavi"
+    },
+    {
+      "text": "ഒരു പ്രൊട്ടക്ഷൻ എന്ന നിലയിൽ ഒരു കാവൽ പട്ടിയെപ്പോലെ എന്നും ഞാൻ ഉണ്ടാവും..",
+      "audio": "protection"
+    },
+    {
+      "text": "ഇത് നമ്മുടെ ശ്രദ്ധ തിരിച്ചു വിടാനുള്ള ഒരു ചട്ടമ്പി നാടകം അല്ലേ..?",
+      "audio": "drama"
+    },
+    {
+      "text": "ഒന്ന് നിന്നേ .. അയാളെന്നെ കണ്ടാരുന്നോ..?",
+      "audio": "stop"
+    },
+    {
+      "text": "ഓർമിപ്പിക്കല്ലേ.. പൊന്നേ.. ",
+      "audio": "remind"
+    }
+  ],
+  "ok": {
+    "label": "OK",
+    "audio": [
+      "promise"
+    ]
+  },
+  "mouse": {
+    "click": [
+      {
+        "text": "അയ്യോ.. അങ്ങനെ പറഞ്ഞൂട..",
+        "audio": "ayyo"
+      },
+      {
+        "text": "ഞാൻ പോവൂല..",
+        "audio": "povoola"
+      },
+      {
+        "text": "ചെവിയും കേട്ടൂടാ.. കണ്ണും കണ്ടൂട..",
+        "audio": "chevi"
+      }
+    ],
+    "dblclick": [
+      {
+        "text": "ഞാൻ പോവൂലാന്നല്ലേ പറഞ്ഞേ..",
+        "audio": "povoola2"
+      },
+      {
+        "text": "ഇനി നമ്മള് എന്ത് സെയ്യും മല്ലയ്യ?",
+        "audio": "enth_seyyum"
+      },
+      {
+        "text": "ഇങ്ങനെ പേടിക്കാതെട..",
+        "audio": "pedi"
+      },
+      {
+        "text": "ഇന്നിനി വയ്യ.. ബാക്കി നാളെ വന്ന് വാങ്ങിക്കാം..",
+        "audio": "tomorrow"
+      }
+    ],
+    "dragStart": [
+      {
+        "audio": "ayyo"
+      }
+    ],
+    "drop": [
+      {
+        "audio": "apology"
+      }
+    ],
+    "hover": []
+  }
+}

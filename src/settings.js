@@ -18,7 +18,7 @@ function show(page) {
   try { localStorage.setItem("page", page); } catch {}
 }
 navButtons.forEach((b) => b.addEventListener("click", () => show(b.dataset.page)));
-try { show(localStorage.getItem("page") || "general"); } catch { show("general"); }
+try { show(localStorage.getItem("page") === "reminders" ? "dialogues" : localStorage.getItem("page") || "general"); } catch { show("general"); }
 
 // ----- Rendering settings into the controls -----
 function toast(text = "Saved") {
@@ -79,6 +79,9 @@ document.getElementById("login").addEventListener("change", (e) => {
 document.getElementById("reset").addEventListener("click", () => {
   if (confirm("Restore all settings to their defaults?")) api.reset().then(() => toast("Defaults restored"));
 });
+for (const btn of document.querySelectorAll("[data-link]")) {
+  btn.addEventListener("click", () => api.openLink(btn.dataset.link));
+}
 document.getElementById("openData").addEventListener("click", () => api.openDataFolder());
 for (const btn of document.querySelectorAll("[data-action]")) {
   btn.addEventListener("click", () => api.action(btn.dataset.action, btn.dataset.arg));
@@ -91,7 +94,7 @@ api.get().then((info) => {
   document.getElementById("login").checked = info.loginItem;
   document.getElementById("ver").textContent = `Version ${info.version}`;
   document.getElementById("aboutVer").textContent = info.version;
-  document.getElementById("dataPath").textContent = `${info.dataPath}\\settings.json`;
+  document.getElementById("dataPath").textContent = info.settingsPath;
   document.getElementById("aboutTech").textContent = `Electron ${info.versions.electron} · Chromium ${info.versions.chrome} · Node ${info.versions.node}`;
   render();
 });

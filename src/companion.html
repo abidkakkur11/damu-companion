@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' blob: data:; media-src 'self'; style-src 'self' 'unsafe-inline'">
 <style>
+  /* Bundled so Malayalam looks the same on every system (SIL Open Font License, see assets/fonts/OFL.txt). */
+  @font-face {
+    font-family: "Noto Sans Malayalam"; font-weight: 600; font-style: normal; font-display: block;
+    src: url("../assets/fonts/NotoSansMalayalam-SemiBold.woff2") format("woff2");
+    unicode-range: U+0D00-0D7F, U+200C-200D, U+25CC;
+  }
   :root {
     /* Palette taken from the character sheet: shirt olive, mundu cream, stripe green, accent gold. */
     --cream-hi: #fffdf3; --cream-lo: #f4e8c8; --edge: #c8ad66; --ink: #3a3417;
@@ -24,7 +30,7 @@
   /* Speech bubble: soft clay/3D look to match the character render. */
   #bubble {
     position: absolute; display: none; align-items: center; gap: 12px;
-    max-width: 330px; padding: 12px 18px 12px 12px; border-radius: 26px;
+    max-width: 380px; padding: 12px 18px 12px 12px; border-radius: 26px;
     background: linear-gradient(180deg, var(--cream-hi) 0%, var(--cream-lo) 100%);
     border: 2px solid rgba(200, 173, 102, .55);
     box-shadow:
@@ -48,7 +54,7 @@
     box-shadow: 0 4px 0 var(--edge), 0 8px 12px rgba(40, 30, 0, .3), inset 0 0 8px rgba(0, 0, 0, .18);
   }
   #face img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; transform: scale(1.1); display: block; }
-  #text { font: 600 15px/1.35 "Segoe UI", "Nirmala UI", sans-serif; color: var(--ink); text-shadow: 0 1px 0 rgba(255, 255, 255, .8); }
+  #text { font: 600 15px/1.65 "Noto Sans Malayalam", "Segoe UI", "Nirmala UI", "Malayalam Sangam MN", sans-serif; color: var(--ink); text-shadow: 0 1px 0 rgba(255, 255, 255, .8); }
   #row { margin-top: 10px; display: flex; gap: 8px; }
   #row:empty { display: none; }
   #row button {

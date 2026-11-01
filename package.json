@@ -1,7 +1,7 @@
 {
   "name": "damu-companion",
-  "version": "1.0.0",
-  "description": "Damu - a desktop companion that reminds you to drink water and take breaks.",
+  "version": "2.0.0",
+  "description": "Damu - a desktop companion who drops by with dialogues, reacts to your mouse and sits around. For Windows and macOS.",
   "main": "src/main.js",
   "author": "abidkakkur11",
   "license": "MIT",
@@ -17,9 +17,9 @@
   "keywords": [
     "electron",
     "desktop-companion",
-    "reminders",
-    "hydration",
-    "windows"
+    "desktop-pet",
+    "windows",
+    "macos"
   ],
   "engines": {
     "node": ">=20"
@@ -27,11 +27,14 @@
   "scripts": {
     "start": "electron .",
     "check": "node --check src/main.js && node --check src/companion.js && node --check src/settings.js && node --check src/preload.js && node --check src/preload-settings.js",
-    "pack": "electron-builder --win --dir",
-    "dist": "electron-builder --win nsis",
+    "pack": "electron-builder --win --dir --publish never",
+    "dist": "electron-builder --win --publish never",
     "icon": "node scripts/make-icon.js",
     "avatar": "node scripts/process-avatar.mjs",
-    "process:v1": "node scripts/process-new-damu.js"
+    "process:v1": "node scripts/process-new-damu.js",
+    "pack:mac": "electron-builder --mac --dir --publish never",
+    "dist:win": "electron-builder --win --publish never",
+    "dist:mac": "electron-builder --mac --publish never"
   },
   "build": {
     "appId": "net.expedigit.damu",
@@ -47,7 +50,8 @@
       "!assets/v1/**",
       "!assets/poses/*.png",
       "!assets/audio/README.txt",
-      "!assets/icon.ico"
+      "!assets/icon.ico",
+      "!assets/icon-mac.png"
     ],
     "win": {
       "target": [
@@ -69,9 +73,40 @@
       "shortcutName": "Damu",
       "uninstallDisplayName": "Damu",
       "deleteAppDataOnUninstall": false,
-      "runAfterFinish": true
+      "runAfterFinish": true,
+      "artifactName": "Damu-Setup-${version}.${ext}"
     },
-    "afterPack": "scripts/after-pack.js"
+    "afterPack": "scripts/after-pack.js",
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "icon": "assets/icon-mac.png",
+      "category": "public.app-category.lifestyle",
+      "identity": null,
+      "hardenedRuntime": false
+    },
+    "dmg": {
+      "title": "Damu ${version}",
+      "contents": [
+        {
+          "x": 130,
+          "y": 190
+        },
+        {
+          "x": 410,
+          "y": 190,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "artifactName": "Damu-${version}-${os}-${arch}.${ext}"
   },
   "devDependencies": {
     "@imgly/background-removal-node": "^1.4.5",

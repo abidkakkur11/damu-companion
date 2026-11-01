@@ -1,16 +1,29 @@
 name: Release
 
-# Push a tag like v1.0.0 to build the installer and publish it as a GitHub release.
+# Push a tag like v2.0.0 to build the Windows installer and the macOS disk image
+# and publish them together as one GitHub release.
 on:
   push:
     tags: ["v*"]
-
-permissions:
-  contents: write
+  workflow_dispatch: # build both installers without publishing, to test the pipeline
 
 jobs:
-  release:
-    runs-on: windows-latest
+  build:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: windows-latest
+            dist: dist:win
+            files: |
+              dist/Damu-Setup-*.exe
+              dist/Damu-Setup-*.exe.blockmap
+          - os: macos-latest
+            dist: dist:mac
+            files: |
+              dist/Damu-*-mac-*.dmg
+              dist/Damu-*-mac-*.dmg.blockmap
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,10 +32,25 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
-      - run: npm run dist
+      - run: npm run ${{ matrix.dist }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installer-${{ matrix.os }}
+          path: ${{ matrix.files }}
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
       - uses: softprops/action-gh-release@v2
         with:
-          files: |
-            dist/Damu Setup *.exe
-            dist/Damu Setup *.exe.blockmap
+          files: artifacts/*
           generate_release_notes: true

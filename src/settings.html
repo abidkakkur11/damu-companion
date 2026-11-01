@@ -106,7 +106,7 @@
   </div>
   <nav id="nav">
     <button data-page="general" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>General</span></button>
-    <button data-page="reminders"><svg viewBox="0 0 24 24"><path d="M12 2.5s6 6.2 6 10.5a6 6 0 0 1-12 0C6 8.700 12 2.500 12 2.500z"/></svg><span>Reminders</span></button>
+    <button data-page="dialogues"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.600 7.100L3 21l1.900-6.400A8 8 0 1 1 21 12z"/></svg><span>Dialogues</span></button>
     <button data-page="companion"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.500"/><path d="M5 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg><span>Companion</span></button>
     <button data-page="audio"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.500 8.500a5 5 0 0 1 0 7M18.500 5.500a9 9 0 0 1 0 13"/></svg><span>Audio</span></button>
     <div class="sep"></div>
@@ -119,19 +119,19 @@
   <!-- GENERAL -->
   <section id="general" class="active">
     <h1>General</h1>
-    <p class="lead">Damu lives on your desktop and keeps you hydrated. Changes apply instantly.</p>
+    <p class="lead">Damu lives on your desktop and drops by to tell you things. Changes apply instantly.</p>
     <div class="card">
       <div class="row">
         <div><div class="t">Show Damu on screen</div><div class="d">Off: he walks off the screen and stays away until you turn this on.</div></div>
         <label class="switch"><input type="checkbox" data-key="visible" aria-label="Show Damu on screen"><i></i></label>
       </div>
       <div class="row">
-        <div><div class="t">Start with Windows</div><div class="d">Launch Damu automatically when you sign in.</div></div>
-        <label class="switch"><input type="checkbox" id="login" aria-label="Start with Windows"><i></i></label>
+        <div><div class="t">Start at login</div><div class="d">Launch Damu automatically when you sign in to your computer.</div></div>
+        <label class="switch"><input type="checkbox" id="login" aria-label="Start at login"><i></i></label>
       </div>
       <div class="row">
-        <div><div class="t">Pause all reminders</div><div class="d">Water and break reminders stop until you switch this off.</div></div>
-        <label class="switch"><input type="checkbox" data-key="paused" aria-label="Pause all reminders"><i></i></label>
+        <div><div class="t">Pause dialogues</div><div class="d">Damu stops dropping by with dialogues until you switch this off.</div></div>
+        <label class="switch"><input type="checkbox" data-key="paused" aria-label="Pause dialogues"><i></i></label>
       </div>
     </div>
 
@@ -139,8 +139,7 @@
     <div class="card">
       <div class="actions">
         <button class="btn alt" data-action="say-hi" data-requires="visible">Say hi</button>
-        <button class="btn alt" data-action="remind" data-arg="water" data-requires="visible">Water reminder now</button>
-        <button class="btn alt" data-action="remind" data-arg="break" data-requires="visible">Break reminder now</button>
+        <button class="btn alt" data-action="dialogue-now" data-requires="visible">Dialogue now</button>
       </div>
     </div>
 
@@ -153,41 +152,22 @@
     </div>
   </section>
 
-  <!-- REMINDERS -->
-  <section id="reminders">
-    <h1>Reminders</h1>
-    <p class="lead">Choose how often Damu nudges you. Reminders are not medical advice.</p>
+  <!-- DIALOGUES -->
+  <section id="dialogues">
+    <h1>Dialogues</h1>
+    <p class="lead">Every so often Damu walks over, tells you something (with its voice clip) and waits for you to press OK. Then he does something fun.</p>
     <div class="card" data-dim="paused">
       <div class="row">
-        <div><div class="t">Drink water</div><div class="d">Remind me to drink water.</div></div>
-        <label class="switch"><input type="checkbox" data-key="waterEnabled" aria-label="Water reminders"><i></i></label>
+        <div><div class="t">Damu visits with a dialogue</div><div class="d">Switch off if you'd rather he just wanders around.</div></div>
+        <label class="switch"><input type="checkbox" data-key="dialoguesEnabled" aria-label="Damu visits with a dialogue"><i></i></label>
       </div>
-      <div class="row" data-requires="waterEnabled">
-        <div><div class="t">Water every</div></div>
-        <div class="ctl"><input type="range" min="1" max="180" step="1" data-key="waterMinutes" data-commit="change" data-fmt="min" aria-label="Water interval in minutes"><span class="out" data-out="waterMinutes"></span></div>
-      </div>
-      <div class="row">
-        <div><div class="t">Take a break</div><div class="d">Remind me to stand up, stretch and rest my eyes.</div></div>
-        <label class="switch"><input type="checkbox" data-key="breakEnabled" aria-label="Break reminders"><i></i></label>
-      </div>
-      <div class="row" data-requires="breakEnabled">
-        <div><div class="t">Break every</div></div>
-        <div class="ctl"><input type="range" min="1" max="180" step="1" data-key="breakMinutes" data-commit="change" data-fmt="min" aria-label="Break interval in minutes"><span class="out" data-out="breakMinutes"></span></div>
+      <div class="row" data-requires="dialoguesEnabled">
+        <div><div class="t">Visit every</div><div class="d">On average. Each visit comes a little earlier or later.</div></div>
+        <div class="ctl"><input type="range" min="1" max="120" step="1" data-key="visitMinutes" data-commit="change" data-fmt="min" aria-label="Minutes between visits"><span class="out" data-out="visitMinutes"></span></div>
       </div>
     </div>
-
-    <h2>Chatter</h2>
-    <div class="card">
-      <div class="row">
-        <div><div class="t">Damu talks on his own</div><div class="d">How often he makes a random remark between reminders.</div></div>
-        <select data-key="chatter" aria-label="Chatter frequency">
-          <option value="often">Often (every 2–4 min)</option>
-          <option value="normal">Normal (every 4–8 min)</option>
-          <option value="rare">Rare (every 10–15 min)</option>
-          <option value="off">Off</option>
-        </select>
-      </div>
-    </div>
+    <h2>Try it</h2>
+    <div class="card"><div class="actions"><button class="btn" data-action="dialogue-now" data-requires="visible">Dialogue now</button></div></div>
   </section>
 
   <!-- COMPANION -->
@@ -196,15 +176,15 @@
     <p class="lead">How Damu looks and moves around your screen.</p>
     <div class="card">
       <div class="row">
-        <div><div class="t">Walking speed</div><div class="d">How fast he strolls.</div></div>
-        <div class="ctl"><input type="range" min="0.4" max="2.5" step="0.1" data-key="walkSpeed" data-fmt="x" aria-label="Walking speed"><span class="out" data-out="walkSpeed"></span></div>
+        <div><div class="t">Walking speed</div><div class="d">How fast he moves around.</div></div>
+        <div class="ctl"><input type="range" min="0.4" max="3" step="0.1" data-key="walkSpeed" data-fmt="x" aria-label="Walking speed"><span class="out" data-out="walkSpeed"></span></div>
       </div>
       <div class="row">
         <div><div class="t">Size</div><div class="d">Scale Damu up or down.</div></div>
         <div class="ctl"><input type="range" min="0.6" max="1.6" step="0.05" data-key="size" data-fmt="pct" aria-label="Size"><span class="out" data-out="size"></span></div>
       </div>
       <div class="row">
-        <div><div class="t">Wander off-screen</div><div class="d">Now and then he walks out of the screen and comes back with a question.</div></div>
+        <div><div class="t">Wander off-screen</div><div class="d">Now and then he walks out of the screen and comes back.</div></div>
         <label class="switch"><input type="checkbox" data-key="offscreenTrips" aria-label="Wander off-screen"><i></i></label>
       </div>
     </div>
@@ -213,7 +193,7 @@
   <!-- AUDIO -->
   <section id="audio">
     <h1>Audio</h1>
-    <p class="lead">Damu's voice clips. Each event plays a random clip from its set.</p>
+    <p class="lead">Damu's voice clips. Each dialogue plays its own clip; reactions pick one at random.</p>
     <div class="card">
       <div class="row">
         <div><div class="t">Enable audio</div><div class="d">Master switch for all of Damu's sounds.</div></div>
@@ -228,15 +208,11 @@
     <h2>Play sounds for</h2>
     <div class="card">
       <div class="row" data-requires="audioEnabled">
-        <div><div class="t">Reminders</div><div class="d">Water and break reminders.</div></div>
-        <label class="switch"><input type="checkbox" data-key="soundReminders" aria-label="Sound for reminders"><i></i></label>
+        <div><div class="t">Dialogues</div><div class="d">The greeting, each dialogue's voice, and the clip after you press OK.</div></div>
+        <label class="switch"><input type="checkbox" data-key="soundDialogues" aria-label="Sound for dialogues"><i></i></label>
       </div>
       <div class="row" data-requires="audioEnabled">
-        <div><div class="t">Greetings &amp; chatter</div><div class="d">Hello on launch, random remarks, coming back from a trip.</div></div>
-        <label class="switch"><input type="checkbox" data-key="soundChatter" aria-label="Sound for chatter"><i></i></label>
-      </div>
-      <div class="row" data-requires="audioEnabled">
-        <div><div class="t">Reactions</div><div class="d">When you click or double-click him.</div></div>
+        <div><div class="t">Mouse reactions</div><div class="d">When you click, double-click or drag him.</div></div>
         <label class="switch"><input type="checkbox" data-key="soundReactions" aria-label="Sound for reactions"><i></i></label>
       </div>
     </div>
@@ -248,7 +224,7 @@
   <section id="about" class="prose">
     <div class="about-hero">
       <img src="../assets/icon.png" alt="">
-      <div><h1>Damu</h1><div class="lead" style="margin:0">Your desktop companion for water and break reminders.</div></div>
+      <div><h1>Damu</h1><div class="lead" style="margin:0">A little desktop companion with a lot to say.</div></div>
     </div>
     <div class="card">
       <dl class="kv">
@@ -259,14 +235,21 @@
         <dt>Built with</dt><dd id="aboutTech"></dd>
       </dl>
     </div>
+    <h3>Support Damu</h3>
+    <p>Damu is free and open source. If he made you smile, you can buy me a coffee. It helps keep the project going.</p>
+    <div class="actions" style="padding-left:0">
+      <button class="btn" data-link="support">Buy me a coffee</button>
+      <button class="btn alt" data-link="repo">View on GitHub</button>
+      <button class="btn alt" data-link="issues">Report a problem</button>
+    </div>
+
     <h3>What is Damu?</h3>
-    <p>Damu is a small animated character who wanders around your desktop, reminds you to drink water and take breaks, and reacts when you click or drag him. He speaks in Malayalam and plays short voice clips.</p>
+    <p>Damu is a small animated character who walks onto your screen every so often, tells you something with a voice clip and a speech bubble, and waits for you to press OK. Then he does something fun: cheers or runs. You can click, double-click and drag him too, and he reacts.</p>
     <h3>Good to know</h3>
     <ul>
       <li>Damu sits on top of your windows but never blocks them: clicks pass straight through everywhere except on Damu himself.</li>
-      <li>Find him in the system tray (the <code>^</code> arrow next to the clock) to open Settings, pause reminders or quit.</li>
-      <li>Closing this window doesn't quit Damu. Use <em>Quit Damu</em> from the tray menu.</li>
-      <li>Reminders are friendly nudges, not medical advice.</li>
+      <li>Find him in the system tray (Windows) or menu bar (macOS) to open Settings, pause dialogues or quit.</li>
+      <li>Closing this window doesn't quit Damu. Use <em>Quit Damu</em> from the tray or menu bar.</li>
     </ul>
     <h3>License</h3>
     <p>Damu is free software released under the MIT License. Copyright © 2026 abidkakkur11. It is provided "as is", without warranty of any kind.</p>
@@ -275,7 +258,7 @@
   <!-- PRIVACY -->
   <section id="privacy" class="prose">
     <h1>Privacy Policy</h1>
-    <p class="lead">Last updated: 31 October 2026</p>
+    <p class="lead">Last updated: 1 November 2026</p>
     <p><b>The short version:</b> Damu works entirely on your computer. It collects nothing, sends nothing and has no accounts.</p>
 
     <h3>Data we collect</h3>
@@ -284,20 +267,20 @@
     <h3>Data stored on your device</h3>
     <p>Damu saves your preferences (the options in this window) in a single file, <code>settings.json</code>, in the app's data folder:</p>
     <p><code id="dataPath"></code></p>
-    <p>It contains only settings such as reminder intervals, speed, size and audio options. Delete the file or use <em>Reset</em> to clear it. Uninstalling Damu removes the program; you can delete the data folder to remove the settings too.</p>
+    <p>It contains only settings such as visit interval, speed, size and audio options. Delete the file or use <em>Reset</em> to clear it. Uninstalling Damu removes the program; you can delete the data folder to remove the settings too.</p>
     <div class="actions" style="padding-left:0"><button class="btn alt" id="openData">Open data folder</button></div>
 
     <h3>Network access</h3>
-    <p>Damu makes no network connections. All images, animations and voice clips are bundled with the app and loaded from your disk. There is no auto-update check.</p>
+    <p>Damu makes no network connections. All images, animations, fonts and voice clips are bundled with the app and loaded from your disk. There is no auto-update check. Buttons that open a web page (such as Buy me a coffee) just launch your default browser; Damu itself still makes no connections.</p>
 
     <h3>What Damu can see</h3>
     <ul>
       <li>Damu draws a transparent window over your screen. It only reacts to your mouse pointer while it is over Damu himself (to let you click, drag and hover over him, and to make him glance toward the pointer). Pointer position is used on the spot and never stored or sent anywhere.</li>
-      <li>Damu does <b>not</b> take screenshots, record the screen, log keystrokes, read the clipboard, or access your files, windows, camera or microphone.</li>
+      <li>Damu does <b>not</b> take screenshots, record the screen, log keystrokes, read the clipboard, or access your files, other windows, camera or microphone.</li>
     </ul>
 
-    <h3>Start with Windows</h3>
-    <p>If you turn this on, Damu registers itself as a sign-in item for your Windows account so it starts when you log in. Turning it off removes that entry.</p>
+    <h3>Start at login</h3>
+    <p>If you turn this on, Damu registers itself as a sign-in item for your user account (a Windows startup entry or a macOS login item) so it starts when you log in. Turning it off removes that entry.</p>
 
     <h3>Third parties and children</h3>
     <p>No data is shared with any third party, because none is collected. Since Damu collects no personal information from anyone, it collects none from children either.</p>
