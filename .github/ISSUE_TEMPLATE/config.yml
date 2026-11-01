@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question or share an idea
+    url: https://github.com/abidkakkur11/damu-companion/discussions
+    about: Questions, ideas and show-and-tell belong in Discussions.
+  - name: Support the project
+    url: https://buymeacoffee.com/abidkp
+    about: Damu is free. If you like him, you can buy the maintainer a coffee.
