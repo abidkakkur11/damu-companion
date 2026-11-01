@@ -4,6 +4,11 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- The author is now credited as **Abid KP** (with a link to abidkp.com) in the app, the landing page, the licence and the package metadata.
+
 ## [2.0.0] - 2026-11-01
 
 Damu is no longer a water-and-break reminder. He now drops by with dialogues of your own.

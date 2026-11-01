@@ -203,7 +203,7 @@ Damu is free. If he made you smile, you can [buy me a coffee](https://buymeacoff
 
 ## License
 
-The source code is released under the [MIT License](LICENSE). Copyright (c) 2026 abidkakkur11.
+The source code is released under the [MIT License](LICENSE). Copyright (c) 2026 [Abid KP](https://abidkp.com).
 
 The character artwork and voice clips in `assets/` are not covered by the MIT License. Please ask before reusing them
 in your own projects. The bundled Noto Sans Malayalam font is under the SIL Open Font License (see [Credits](#credits)).

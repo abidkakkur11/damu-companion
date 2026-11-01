@@ -36,6 +36,7 @@ const LINKS = {
   repo: "https://github.com/abidkakkur11/damu-companion",
   site: "https://abidkakkur11.github.io/damu-companion/",
   issues: "https://github.com/abidkakkur11/damu-companion/issues",
+  author: "https://abidkp.com",
 };
 
 const DEFAULTS = {

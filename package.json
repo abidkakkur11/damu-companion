@@ -3,7 +3,10 @@
   "version": "2.0.0",
   "description": "Damu - a desktop companion who drops by with dialogues, reacts to your mouse and sits around. For Windows and macOS.",
   "main": "src/main.js",
-  "author": "abidkakkur11",
+  "author": {
+    "name": "Abid KP",
+    "url": "https://abidkp.com"
+  },
   "license": "MIT",
   "private": true,
   "homepage": "https://github.com/abidkakkur11/damu-companion#readme",
@@ -39,7 +42,7 @@
   "build": {
     "appId": "net.expedigit.damu",
     "productName": "Damu",
-    "copyright": "Copyright © 2026 abidkakkur11",
+    "copyright": "Copyright © 2026 Abid KP",
     "directories": {
       "output": "dist"
     },

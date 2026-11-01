@@ -14,7 +14,7 @@ module.exports = async (context) => {
     "version-string": {
       ProductName: "Damu",
       FileDescription: "Damu - desktop companion",
-      CompanyName: "abidkakkur11",
+      CompanyName: "Abid KP",
       LegalCopyright: copyright,
       OriginalFilename: `${productFilename}.exe`,
     },
