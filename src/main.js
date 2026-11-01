@@ -32,7 +32,6 @@ function handleAppProtocol(request) {
 
 // Pages the Settings window may open in the default browser (looked up by key, never by raw URL).
 const LINKS = {
-  support: "https://buymeacoffee.com/abidkp",
   repo: "https://github.com/abidkakkur11/damu-companion",
   site: "https://abidkakkur11.github.io/damu-companion/",
   issues: "https://github.com/abidkakkur11/damu-companion/issues",
@@ -273,8 +272,6 @@ function buildMenu() {
       checked: app.getLoginItemSettings().openAtLogin,
       click: (i) => app.setLoginItemSettings({ openAtLogin: i.checked }),
     },
-    { type: "separator" },
-    { label: "Support Damu (Buy me a coffee)", click: () => shell.openExternal(LINKS.support) },
     { type: "separator" },
     { label: "Quit Damu", click: () => app.quit() },
   ]));

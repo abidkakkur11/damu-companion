@@ -11,7 +11,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Platforms: Windows and macOS](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS-blue)
 [![Downloads](https://img.shields.io/github/downloads/abidkakkur11/damu-companion/total?label=downloads)](https://github.com/abidkakkur11/damu-companion/releases)
-[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/abidkp)
 
 **[Website](https://abidkakkur11.github.io/damu-companion/)** · **[Download](https://github.com/abidkakkur11/damu-companion/releases/latest)** · **[Changelog](CHANGELOG.md)** · **[Contribute](CONTRIBUTING.md)**
 
@@ -196,10 +195,6 @@ Issues, ideas, dialogues, translations and pull requests are welcome, and so are
 By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md). Security problems: see [SECURITY.md](SECURITY.md).
 
 The macOS build is new and has had less testing than the Windows one, so reports from Mac users are especially valuable.
-
-## Support
-
-Damu is free. If he made you smile, you can [buy me a coffee](https://buymeacoffee.com/abidkp).
 
 ## License
 
