@@ -178,6 +178,26 @@ h3 { margin: 0 0 8px; font-size: 1.2rem; letter-spacing: -.01em; }
 .foot nav a { color: var(--muted); }
 .foot p { margin: 0; max-width: 56em; }
 
+/* ---------- sound button + talking Damu ---------- */
+.sound {
+  position: fixed; left: 18px; bottom: 18px; z-index: 60; display: inline-flex; align-items: center; gap: 9px;
+  padding: 10px 16px 10px 13px; border-radius: 999px; border: 1px solid var(--line); cursor: pointer;
+  background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink); backdrop-filter: blur(12px);
+  font: 600 .88rem var(--font); box-shadow: var(--shadow); transition: transform .15s ease;
+}
+.sound:hover { transform: translateY(-2px); }
+.sound svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sound .ic-off { display: none; }
+body[data-intro="muted"] .sound .ic-on { display: none; }
+body[data-intro="muted"] .sound .ic-off { display: block; }
+body[data-intro="playing"] .sound { color: var(--green); }
+body[data-intro="pending"] .sound { animation: nudge 1.6s ease-in-out infinite; box-shadow: 0 0 0 3px color-mix(in srgb, var(--green-2) 45%, transparent), var(--shadow); }
+@keyframes nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.stage.talking .damu img { animation: talk .42s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes talk { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.025, .975); } }
+@media (max-width: 640px) { .sound { left: 12px; bottom: 12px; } }
+@media (prefers-reduced-motion: reduce) { .sound, .stage.talking .damu img, body[data-intro="pending"] .sound { animation: none; transition: none; } }
+
 /* ---------- scroll reveal ---------- */
 .js .reveal { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s cubic-bezier(.2, .8, .2, 1); }
 .js .reveal.in { opacity: 1; transform: none; }

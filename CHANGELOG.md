@@ -6,6 +6,9 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [2.0.1] - Unreleased
 
+### Added
+- **Landing page:** Damu says his intro when the visitor first scrolls (or on their first click or tap, if the browser blocks sound), with a Mute / Unmute button. It plays once per visit and remembers a mute.
+
 ### Removed
 - The Buy me a coffee links (README, landing page, About page, tray menu and the repository Sponsor button).
 

@@ -43,5 +43,15 @@ const out = path.join(root, "site", "assets");
   </svg>`;
   await sharp(Buffer.from(svg)).composite([{ input: damu, left: 800, top: 50 }]).png().toFile(path.join(out, "og-image.png"));
 
+  // Intro voice for the landing page: a small mono MP3 made from the app's intro clip
+  try {
+    const { spawnSync } = require("node:child_process");
+    const ffmpeg = require("ffmpeg-static");
+    const src = path.join(root, "assets", "audio", "intro.wav");
+    if (ffmpeg && fs.existsSync(src)) {
+      spawnSync(ffmpeg, ["-y", "-loglevel", "error", "-i", src, "-ac", "1", "-ar", "44100", "-b:a", "80k", path.join(out, "intro.mp3")]);
+    }
+  } catch {}
+
   console.log("site assets written to site/assets:", fs.readdirSync(out).join(", "));
 })();

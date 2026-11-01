@@ -58,6 +58,82 @@
   $("damu").addEventListener("click", () => { say(idx + 1); auto(); });
   auto();
 
+  // ----- Damu's intro voice -----
+  // Browsers only allow sound after the visitor has interacted with the page, and scrolling doesn't count.
+  // So: try to play on the first scroll; if the browser blocks it, play on the first click, tap or key press.
+  // The sound button lets people mute, unmute or replay, and the choice is remembered.
+  const INTRO_ENABLED = true;
+  const audio = $("intro-audio");
+  const soundBtn = $("sound");
+  const soundLabel = $("sound-label");
+  const stage = document.querySelector(".stage");
+  const MUTED_KEY = "damu-sound-muted";
+  const PLAYED_KEY = "damu-intro-played";
+  const store = {
+    get: (s, k) => { try { return window[s].getItem(k); } catch { return null; } },
+    set: (s, k, v) => { try { window[s].setItem(k, v); } catch {} },
+    del: (s, k) => { try { window[s].removeItem(k); } catch {} },
+  };
+  const LABELS = { idle: "Hear Damu", pending: "Tap to hear Damu", playing: "Mute Damu", done: "Hear Damu again", muted: "Unmute Damu" };
+  let state = "idle";
+
+  function setState(next) {
+    state = next;
+    document.body.dataset.intro = next;
+    soundLabel.textContent = LABELS[next];
+    soundBtn.setAttribute("aria-pressed", String(next === "muted"));
+    soundBtn.setAttribute("aria-label", next === "muted" ? "Damu's voice is off. Turn it on." : next === "playing" ? "Mute Damu's voice" : "Play Damu's voice");
+    stage.classList.toggle("talking", next === "playing");
+  }
+
+  async function playIntro() {
+    try {
+      audio.currentTime = 0;
+      audio.volume = 0.85;
+      await audio.play();
+      store.set("sessionStorage", PLAYED_KEY, "1");
+      store.del("localStorage", MUTED_KEY);
+      say(0); // show the line he is speaking
+      auto();
+      setState("playing");
+    } catch {
+      setState("pending"); // blocked by the browser: wait for a real click, tap or key press
+    }
+  }
+
+  if (!INTRO_ENABLED) {
+    soundBtn.hidden = true;
+  } else {
+    if (store.get("localStorage", MUTED_KEY) === "1") setState("muted");
+    else if (store.get("sessionStorage", PLAYED_KEY) === "1") setState("done");
+    else setState("idle");
+
+    audio.addEventListener("ended", () => setState("done"));
+
+    const onScroll = () => {
+      if (window.scrollY < 60 || state !== "idle") return;
+      removeEventListener("scroll", onScroll);
+      playIntro();
+    };
+    addEventListener("scroll", onScroll, { passive: true });
+
+    // First real interaction after a blocked attempt
+    const onGesture = (e) => {
+      if (state === "pending" && !soundBtn.contains(e.target)) playIntro();
+    };
+    for (const type of ["pointerup", "click", "keydown", "touchend"]) addEventListener(type, onGesture, { capture: true });
+
+    soundBtn.addEventListener("click", () => {
+      if (state === "playing") {
+        audio.pause();
+        store.set("localStorage", MUTED_KEY, "1");
+        setState("muted");
+      } else {
+        playIntro();
+      }
+    });
+  }
+
   // ----- OS detection -----
   const ua = navigator.userAgent || "";
   const platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "";
