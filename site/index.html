@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Damu: your desktop's favourite visitor</title>
+<meta name="description" content="Damu is a free, open-source desktop companion for Windows and macOS. He walks onto your screen, tells you something in his own voice, and reacts when you click him.">
+<meta name="theme-color" content="#2e7d32">
+<link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="canonical" href="https://abidkakkur11.github.io/damu-companion/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Damu: your desktop's favourite visitor">
+<meta property="og:description" content="A free, open-source desktop companion for Windows and macOS with voice, dialogues and a lot of personality.">
+<meta property="og:url" content="https://abidkakkur11.github.io/damu-companion/">
+<meta property="og:image" content="https://abidkakkur11.github.io/damu-companion/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="stylesheet" href="styles.css">
+<link rel="preload" href="assets/NotoSansMalayalam-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="top">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Damu home"><img src="assets/logo.png" alt="" width="34" height="34"><span>Damu</span></a>
+    <nav aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#screens">Screenshots</a>
+      <a href="#faq">FAQ</a>
+      <a class="gh" href="https://github.com/abidkakkur11/damu-companion" rel="noopener">GitHub</a>
+    </nav>
+    <a class="btn btn-sm btn-coffee" href="https://buymeacoffee.com/abidkp" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h11v5a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5V8zm11 1h1.5a2.5 2.5 0 0 1 0 5H16M7 3v2M10.500 3v2M14 3v2"/></svg>
+      <span>Buy me a coffee</span>
+    </a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="blob blob-a" aria-hidden="true"></div>
+    <div class="blob blob-b" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="dot"></span> Free · Open source · Windows &amp; macOS</p>
+        <h1>Meet Damu.<br><span class="grad">Your desktop's favourite visitor.</span></h1>
+        <p class="lead">Every so often Damu strolls onto your screen, tells you something in his own voice, and waits for you to say OK. Then he cheers or dashes off. Click him, drag him, double-click him: he has an opinion about all of it.</p>
+
+        <div class="cta" id="cta">
+          <a class="btn btn-primary" id="dl-primary" href="https://github.com/abidkakkur11/damu-companion/releases/latest" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4.500-4.500M12 15l-4.500-4.500M4 20h16"/></svg>
+            <span><b id="dl-primary-label">Download Damu</b><small id="dl-primary-meta">Free for Windows and macOS</small></span>
+          </a>
+          <a class="btn btn-ghost" href="#download">All downloads</a>
+        </div>
+        <p class="stat" id="stat" hidden><span id="stat-count">0</span> downloads so far</p>
+      </div>
+
+      <div class="stage" aria-label="Damu saying hello">
+        <div class="glow" aria-hidden="true"></div>
+        <div class="bubble" id="bubble" role="status">
+          <img class="face" src="assets/logo.png" alt="" width="46" height="46">
+          <p id="bubble-text" lang="ml">ഞാൻ ദശമൂലം ദാമു.. എന്നെ വിശ്വസിക്കാം..</p>
+          <span class="ok" aria-hidden="true">OK</span>
+        </div>
+        <button class="damu" id="damu" type="button" aria-label="Click Damu to hear what he has to say">
+          <img id="damu-img" src="assets/damu-neutral.webp" alt="Damu, a friendly man in an olive shirt and white mundu" width="294" height="699" fetchpriority="high">
+        </button>
+        <div class="shadow" aria-hidden="true"></div>
+        <p class="hint">Click Damu</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="wrap">
+      <p class="kicker">What he does</p>
+      <h2>A little desktop companion with a lot to say</h2>
+      <div class="bento">
+        <article class="card c-wide reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.600 7.100L3 21l1.900-6.400A8 8 0 1 1 21 12z"/></svg></div>
+          <h3>Dialogues with a voice</h3>
+          <p>Damu comes to you with a speech bubble and a matching voice clip, then waits for you to press OK. You write the text and bring the audio, in any language.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div>
+          <h3>Fun moves</h3>
+          <p>Say OK and he cheers or runs across your screen.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 2 4 7-3 1.500-4-7-4 4z"/></svg></div>
+          <h3>Reacts to your mouse</h3>
+          <p>Click, double-click, drag, drop: each one gets its own voice line.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="7" cy="18" r="2" fill="currentColor"/></svg></div>
+          <h3>Full control</h3>
+          <p>Visit frequency, walking speed, size, volume, off-screen wandering. All in one Settings window.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 22s8-3.500 8-10V5l-8-3-8 3v7c0 6.500 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <h3>Private by design</h3>
+          <p>No accounts, no telemetry, no network. Everything stays on your computer.</p>
+        </article>
+        <article class="card c-full reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+          <h3>Windows and macOS</h3>
+          <p>A tray icon on Windows, a menu-bar icon on macOS, and Damu never blocks your work: clicks pass straight through everywhere except on him.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section alt" id="how">
+    <div class="wrap">
+      <p class="kicker">How it works</p>
+      <h2>Install it, forget it, get a visit</h2>
+      <ol class="steps">
+        <li class="reveal"><span class="n">1</span><h3>Install</h3><p>Download Damu, run the installer and he walks right in.</p></li>
+        <li class="reveal"><span class="n">2</span><h3>He drops by</h3><p>Every few minutes, you choose how often, he shows a dialogue and plays its voice.</p></li>
+        <li class="reveal"><span class="n">3</span><h3>You press OK</h3><p>Another clip plays and he does a little move. Then he carries on with his day.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- SCREENSHOTS -->
+  <section class="section" id="screens">
+    <div class="wrap">
+      <p class="kicker">See it</p>
+      <h2>Simple to set up, easy to make your own</h2>
+      <div class="shots">
+        <figure class="shot reveal"><img src="assets/settings-general.webp" alt="Damu's General settings page" loading="lazy" width="1158" height="804"><figcaption>Show or hide Damu, start at login, try a dialogue</figcaption></figure>
+        <figure class="shot reveal"><img src="assets/settings-dialogues.webp" alt="Damu's Dialogues settings page" loading="lazy" width="1158" height="804"><figcaption>Choose how often he visits</figcaption></figure>
+        <figure class="shot reveal"><img src="assets/settings-companion.webp" alt="Damu's Companion settings page" loading="lazy" width="1158" height="804"><figcaption>Walking speed, size, wandering</figcaption></figure>
+        <figure class="shot reveal"><img src="assets/settings-audio.webp" alt="Damu's Audio settings page" loading="lazy" width="1158" height="804"><figcaption>Volume and a switch for every kind of sound</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD -->
+  <section class="section dl" id="download">
+    <div class="wrap">
+      <p class="kicker">Get Damu</p>
+      <h2>Free, for Windows and macOS</h2>
+      <p class="sub" id="release-line">Fetching the latest version…</p>
+
+      <div class="dl-grid">
+        <article class="platform reveal" id="card-win">
+          <div class="plat-head">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.500 10.500 4.500v7H3zM11.500 4.350 21 3v8.500h-9.500zM3 12.500h7.500v7L3 18.500zM11.500 12.500H21V21l-9.500-1.350z"/></svg>
+            <div><h3>Windows</h3><p>Windows 10 or 11, 64-bit</p></div>
+          </div>
+          <a class="btn btn-primary" id="dl-win" href="https://github.com/abidkakkur11/damu-companion/releases/latest" rel="noopener"><span><b>Download for Windows</b><small id="meta-win">.exe installer</small></span></a>
+          <details>
+            <summary>First-run warning?</summary>
+            <p>The installer isn't code-signed yet, so SmartScreen may say "Windows protected your PC". Click <b>More info</b>, then <b>Run anyway</b>.</p>
+          </details>
+        </article>
+
+        <article class="platform reveal" id="card-mac">
+          <div class="plat-head">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.500 12.500c0-2.300 1.900-3.400 2-3.500-1.100-1.600-2.800-1.800-3.400-1.800-1.400-.1-2.800.9-3.500.9-.7 0-1.900-.8-3.100-.8-1.600 0-3.100.9-3.900 2.400-1.700 2.900-.4 7.200 1.200 9.600.8 1.200 1.700 2.500 3 2.400 1.200 0 1.700-.8 3.100-.8s1.800.8 3.100.8c1.300 0 2.100-1.200 2.900-2.300.9-1.300 1.300-2.600 1.300-2.700-.1 0-2.700-1-2.700-4.200zM14.200 5.600c.6-.8 1.100-1.900.9-3-.9 0-2.100.6-2.700 1.400-.6.700-1.100 1.800-1 2.900 1.100.1 2.200-.5 2.800-1.300z"/></svg>
+            <div><h3>macOS</h3><p>macOS 10.15 or newer · Apple Silicon &amp; Intel</p></div>
+          </div>
+          <a class="btn btn-primary" id="dl-mac" href="https://github.com/abidkakkur11/damu-companion/releases/latest" rel="noopener"><span><b>Download for Mac</b><small id="meta-mac">.dmg disk image</small></span></a>
+          <details>
+            <summary>First-run warning?</summary>
+            <p>The app isn't signed with an Apple certificate yet. Drag Damu to Applications, then <b>right-click it and choose Open</b> (once). If macOS says it's "damaged", run <code>xattr -dr com.apple.quarantine /Applications/Damu.app</code> in Terminal.</p>
+          </details>
+        </article>
+      </div>
+      <p class="note">The macOS build is new, so please <a href="https://github.com/abidkakkur11/damu-companion/issues/new/choose" rel="noopener">tell us</a> if anything misbehaves. All versions are on the <a href="https://github.com/abidkakkur11/damu-companion/releases" rel="noopener">releases page</a>.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section alt" id="faq">
+    <div class="wrap narrow">
+      <p class="kicker">Questions</p>
+      <h2>Good to know</h2>
+      <details class="faq reveal"><summary>Is Damu really free?</summary><p>Yes, completely. It's open source under the MIT License. If you enjoy him, you can <a href="https://buymeacoffee.com/abidkp" rel="noopener">buy me a coffee</a>.</p></details>
+      <details class="faq reveal"><summary>Does Damu collect any data?</summary><p>No. There are no accounts, no analytics and no network connections. The only thing saved is your preferences, in a small file on your computer.</p></details>
+      <details class="faq reveal"><summary>Will he get in the way of my work?</summary><p>No. Damu floats above your windows, but clicks pass straight through everywhere except on Damu himself. You can switch him off in Settings, and he walks off the screen.</p></details>
+      <details class="faq reveal"><summary>Can I use my own dialogues and voice?</summary><p>Yes. All of Damu's text and audio live in one file, <code>assets/content.json</code>. Add your lines and clips (.wav or .mp3), and the speech bubble supports Malayalam and other scripts. See the <a href="https://github.com/abidkakkur11/damu-companion#writing-your-own-dialogues" rel="noopener">guide on GitHub</a>.</p></details>
+      <details class="faq reveal"><summary>How do I contribute?</summary><p>Issues, ideas, translations and pull requests are welcome. Start with the <a href="https://github.com/abidkakkur11/damu-companion/blob/main/CONTRIBUTING.md" rel="noopener">contributing guide</a>.</p></details>
+    </div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section class="section support">
+    <div class="wrap">
+      <div class="support-card reveal">
+        <div>
+          <h2>Enjoying Damu?</h2>
+          <p>He's free and always will be. A coffee helps me keep making him better.</p>
+        </div>
+        <a class="btn btn-coffee btn-lg" href="https://buymeacoffee.com/abidkp" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h11v5a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5V8zm11 1h1.5a2.5 2.5 0 0 1 0 5H16M7 3v2M10.500 3v2M14 3v2"/></svg>
+          <span>Buy me a coffee</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap foot">
+    <div class="brand"><img src="assets/logo.png" alt="" width="28" height="28"><span>Damu</span></div>
+    <nav aria-label="Footer">
+      <a href="https://github.com/abidkakkur11/damu-companion" rel="noopener">GitHub</a>
+      <a href="https://github.com/abidkakkur11/damu-companion/releases" rel="noopener">Releases</a>
+      <a href="https://github.com/abidkakkur11/damu-companion/blob/main/CHANGELOG.md" rel="noopener">Changelog</a>
+      <a href="https://github.com/abidkakkur11/damu-companion/issues" rel="noopener">Report an issue</a>
+      <a href="https://github.com/abidkakkur11/damu-companion/blob/main/LICENSE" rel="noopener">MIT License</a>
+    </nav>
+    <p>© <span id="year">2026</span> abidkakkur11. This page only talks to GitHub, to show the latest version and download count. Damu itself never connects to anything.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
