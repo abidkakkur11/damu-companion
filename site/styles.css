@@ -146,6 +146,25 @@ h3 { margin: 0 0 8px; font-size: 1.2rem; letter-spacing: -.01em; }
 .steps p { margin: 0; color: var(--muted); }
 .n { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; margin-bottom: 16px; font-weight: 800; color: #3a2a00; background: linear-gradient(145deg, var(--gold-2), var(--gold)); box-shadow: 0 6px 14px -4px rgba(200, 140, 0, .6); }
 
+/* ---------- video ---------- */
+.video-wrap {
+  position: relative;
+  width: min(860px, 100%);
+  margin-inline: auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  background: #000;
+  aspect-ratio: 16 / 9;
+}
+.video-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
 .shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
 .shot { margin: 0; }
 .shot img { border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow); width: 100%; }
