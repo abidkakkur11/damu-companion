@@ -6,6 +6,9 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [2.0.1] - Unreleased
 
+### Fixed
+- The documented minimum macOS version was wrong: the bundled Electron 33 needs macOS 11 (Big Sur) or newer, not 10.15.
+
 ### Added
 - **Landing page:** Damu says his intro when the visitor first scrolls (or on their first click or tap, if the browser blocks sound), with a Mute / Unmute button. It plays once per visit and remembers a mute.
 
