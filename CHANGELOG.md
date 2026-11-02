@@ -34,6 +34,9 @@ A second character, a character switch, and a lighter, steadier app.
 
 ## [2.0.1] - 2026-11-01
 
+### Fixed
+- The documented minimum macOS version was wrong: the bundled Electron 33 needs macOS 11 (Big Sur) or newer, not 10.15.
+
 ### Added
 - **Landing page:** Damu says his intro when the visitor first scrolls (or on their first click or tap, if the browser blocks sound), with a Mute / Unmute button. It plays once per visit and remembers a mute.
 
