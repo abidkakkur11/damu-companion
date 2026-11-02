@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://abidkakkur11.github.io/damu-companion/sitemap.xml

@@ -3,19 +3,134 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Damu: your desktop's favourite visitor</title>
-<meta name="description" content="Damu is a free, open-source desktop companion for Windows and macOS. He walks onto your screen, tells you something in his own voice, and reacts when you click him.">
+<title>Damu — Free Dashamoolam Damu Desktop Companion for Windows &amp; macOS</title>
+<meta name="description" content="Damu is a free, open-source animated desktop companion for Windows and macOS. Featuring Dashamoolam Damu with iconic Malayalam comedy dialogues, voice clips, interactive mouse reactions, and break reminders.">
+<meta name="keywords" content="Damu, Dashamoolam Damu, desktop companion, desktop pet, shimeji, virtual pet, Malayalam, open source desktop app, Windows desktop companion, macOS desktop companion, Suraj Venjaramoodu">
+<meta name="author" content="Abid KP">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <meta name="theme-color" content="#2e7d32">
-<link rel="icon" href="assets/favicon.png">
+
+<link rel="icon" href="assets/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <link rel="canonical" href="https://abidkakkur11.github.io/damu-companion/">
 
+<!-- Preconnects & Resource Hints -->
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://i.ytimg.com">
+<link rel="preconnect" href="https://api.github.com">
+<link rel="dns-prefetch" href="https://www.youtube.com">
+<link rel="dns-prefetch" href="https://i.ytimg.com">
+<link rel="dns-prefetch" href="https://api.github.com">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:site_name" content="Damu Desktop Companion">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Damu: your desktop's favourite visitor">
-<meta property="og:description" content="A free, open-source desktop companion for Windows and macOS with voice, dialogues and a lot of personality.">
+<meta property="og:title" content="Damu — Free Dashamoolam Damu Desktop Companion">
+<meta property="og:description" content="Free, open-source animated desktop companion for Windows and macOS. Featuring Dashamoolam Damu with iconic Malayalam dialogues, authentic voices, and interactive reactions.">
 <meta property="og:url" content="https://abidkakkur11.github.io/damu-companion/">
 <meta property="og:image" content="https://abidkakkur11.github.io/damu-companion/assets/og-image.png">
+<meta property="og:image:secure_url" content="https://abidkakkur11.github.io/damu-companion/assets/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Damu - Animated Desktop Companion for Windows and macOS">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Damu — Free Dashamoolam Damu Desktop Companion">
+<meta name="twitter:description" content="Free, open-source animated desktop companion for Windows and macOS with Malayalam voice clips, dialogues, and a lot of personality.">
+<meta name="twitter:image" content="https://abidkakkur11.github.io/damu-companion/assets/og-image.png">
+<meta name="twitter:image:alt" content="Damu - Animated Desktop Companion">
+
+<!-- Structured Data (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://abidkakkur11.github.io/damu-companion/#software",
+      "name": "Damu",
+      "operatingSystem": "Windows 10, Windows 11, macOS 10.15+",
+      "applicationCategory": "DesktopEnhancementApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Free, open-source animated desktop companion for Windows and macOS featuring Dashamoolam Damu with Malayalam comedy dialogues, voice clips, and interactive mouse reactions.",
+      "image": "https://abidkakkur11.github.io/damu-companion/assets/og-image.png",
+      "screenshot": "https://abidkakkur11.github.io/damu-companion/assets/settings-general.webp",
+      "softwareVersion": "0.1.0",
+      "license": "https://opensource.org/licenses/MIT",
+      "author": {
+        "@type": "Person",
+        "name": "Abid KP",
+        "url": "https://abidkp.com"
+      },
+      "downloadUrl": "https://github.com/abidkakkur11/damu-companion/releases/latest"
+    },
+    {
+      "@type": "VideoObject",
+      "@id": "https://abidkakkur11.github.io/damu-companion/#video",
+      "name": "Damu Desktop Companion Demo",
+      "description": "Watch Damu the animated desktop companion in action on Windows and macOS screens.",
+      "thumbnailUrl": "https://img.youtube.com/vi/ZGikUny5MIo/maxresdefault.jpg",
+      "uploadDate": "2026-11-01T00:00:00+05:30",
+      "embedUrl": "https://www.youtube.com/embed/ZGikUny5MIo",
+      "contentUrl": "https://youtu.be/ZGikUny5MIo"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://abidkakkur11.github.io/damu-companion/#faqpage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is Damu really free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, completely. It's open source under the MIT License."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Damu collect any data?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. There are no accounts, no analytics and no network connections. The only thing saved is your preferences, in a small file on your computer."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will he get in the way of my work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Damu floats above your windows, but clicks pass straight through everywhere except on Damu himself. You can switch him off in Settings, and he walks off the screen."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use my own dialogues and voice?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. All of Damu's text and audio live in one file, assets/content.json. Add your lines and clips (.wav or .mp3), and the speech bubble supports Malayalam and other scripts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I contribute?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Issues, ideas, translations and pull requests are welcome. Start with the contributing guide on GitHub."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
 
 <link rel="stylesheet" href="styles.css">
 <link rel="preload" href="assets/NotoSansMalayalam-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
@@ -25,7 +140,7 @@
 
 <header class="nav" id="top">
   <div class="wrap nav-inner">
-    <a class="brand" href="#top" aria-label="Damu home"><img src="assets/logo.png" alt="" width="34" height="34"><span>Damu</span></a>
+    <a class="brand" href="#top" aria-label="Damu home"><img src="assets/logo.png" alt="Damu Desktop Companion logo" width="34" height="34"><span>Damu</span></a>
     <nav aria-label="Main">
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
@@ -66,13 +181,13 @@
         <div class="glow" aria-hidden="true"></div>
         <div class="say">
           <div class="bubble" id="bubble" role="status">
-          <img class="face" src="assets/logo.png" alt="" width="46" height="46">
+          <img class="face" src="assets/logo.png" alt="Damu face avatar" width="46" height="46">
           <p id="bubble-text" lang="ml">ഞാൻ ദശമൂലം ദാമു.. എന്നെ വിശ്വസിക്കാം..</p>
           <span class="ok" aria-hidden="true">OK</span>
         </div>
         </div>
         <button class="damu" id="damu" type="button" aria-label="Click Damu to hear what he has to say">
-          <img id="damu-img" src="assets/damu-neutral.webp" alt="Damu, a friendly man in an olive shirt and white mundu" width="294" height="699" fetchpriority="high">
+          <img id="damu-img" src="assets/damu-neutral.webp" alt="Dashamoolam Damu - animated desktop companion in olive shirt and mundu" width="294" height="699" fetchpriority="high">
         </button>
         <div class="shadow" aria-hidden="true"></div>
         <p class="hint">Click Damu</p>
@@ -218,7 +333,7 @@
 
 <footer class="footer">
   <div class="wrap foot">
-    <div class="brand"><img src="assets/logo.png" alt="" width="28" height="28"><span>Damu</span></div>
+    <div class="brand"><img src="assets/logo.png" alt="Damu logo" width="28" height="28"><span>Damu</span></div>
     <nav aria-label="Footer">
       <a href="https://github.com/abidkakkur11/damu-companion" rel="noopener">GitHub</a>
       <a href="https://github.com/abidkakkur11/damu-companion/releases" rel="noopener">Releases</a>

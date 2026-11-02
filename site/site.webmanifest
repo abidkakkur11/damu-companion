@@ -1,0 +1,21 @@
+{
+  "name": "Damu Desktop Companion",
+  "short_name": "Damu",
+  "description": "Free, open-source desktop companion for Windows and macOS featuring Dashamoolam Damu.",
+  "start_url": "/damu-companion/",
+  "display": "standalone",
+  "background_color": "#fbf6e6",
+  "theme_color": "#2e7d32",
+  "icons": [
+    {
+      "src": "assets/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
