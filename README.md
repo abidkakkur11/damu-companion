@@ -46,7 +46,7 @@ Download the installer for your system from the [latest release](https://github.
 | System | File |
 | --- | --- |
 | Windows 10/11 (64-bit) | `Damu-Setup-<version>.exe` |
-| macOS 10.15 or newer (Apple Silicon and Intel) | `Damu-<version>-mac-universal.dmg` |
+| macOS 11 (Big Sur) or newer (Apple Silicon and Intel) | `Damu-<version>-mac-universal.dmg` |
 
 The builds are not code-signed, so your system will warn you the first time:
 
