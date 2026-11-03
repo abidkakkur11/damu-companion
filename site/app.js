@@ -58,6 +58,29 @@
   $("damu").addEventListener("click", () => { say(idx + 1); auto(); });
   auto();
 
+  // ----- Amban preview says things -----
+  const ambanLines = [
+    "Janga Jaga Jagaa!",
+    "എട മോനേ..! അടുത്ത റിലീസിൽ ഞാൻ വരുന്നുണ്ട്!",
+    "Janga Jaga Jagaa!",
+    "Full-on Aavesham on your desktop!",
+    "ഇനി കളി വേറെ ലെവൽ!"
+  ];
+  let ambanIdx = 0;
+  const ambanBtn = $("amban");
+  const ambanBubble = $("amban-bubble");
+  const ambanText = $("amban-bubble-text");
+
+  if (ambanBtn && ambanBubble && ambanText) {
+    ambanBtn.addEventListener("click", () => {
+      ambanIdx = (ambanIdx + 1) % ambanLines.length;
+      ambanText.textContent = ambanLines[ambanIdx];
+      ambanBubble.classList.add("swap");
+      void ambanBubble.offsetWidth;
+      ambanBubble.classList.remove("swap");
+    });
+  }
+
   // ----- Damu's intro voice -----
   // Browsers only allow sound after the visitor has interacted with the page, and scrolling doesn't count.
   // So: try to play on the first scroll; if the browser blocks it, play on the first click, tap or key press.
