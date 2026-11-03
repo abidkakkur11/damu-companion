@@ -276,9 +276,43 @@ h3 { margin: 0 0 8px; font-size: 1.2rem; letter-spacing: -.01em; }
 .plat-head h3 { margin: 0; font-size: 1.35rem; }
 .plat-head p { margin: 0; color: var(--muted); font-size: .92rem; }
 .platform .btn { justify-content: center; text-align: left; }
-.platform details { color: var(--muted); font-size: .94rem; }
-.platform summary { cursor: pointer; font-weight: 600; color: var(--ink); }
-.platform details p { margin: 10px 0 0; }
+.info-box {
+  background: color-mix(in srgb, var(--gold) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--gold) 35%, var(--line));
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: .88rem;
+  line-height: 1.55;
+}
+.info-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-weight: 700;
+  font-size: .88rem;
+  color: var(--ink);
+}
+.info-head svg {
+  width: 17px;
+  height: 17px;
+  stroke: var(--gold);
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+.info-box p {
+  margin: 0;
+  color: var(--muted);
+}
+.info-box b, .info-box strong {
+  color: var(--ink);
+}
+.info-box code {
+  font-size: .85em;
+}
 .note { margin: 24px 0 0; color: var(--muted); font-size: .94rem; }
 
 .faq { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 4px 22px; margin-bottom: 12px; }

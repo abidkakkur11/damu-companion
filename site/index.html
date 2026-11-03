@@ -335,10 +335,13 @@
             <div><h3>Windows</h3><p>Windows 10 or 11, 64-bit</p></div>
           </div>
           <a class="btn btn-primary" id="dl-win" href="https://github.com/abidkakkur11/damu-companion/releases/latest" rel="noopener"><span><b>Download for Windows</b><small id="meta-win">.exe installer</small></span></a>
-          <details>
-            <summary>First-run warning?</summary>
-            <p>The installer isn't code-signed yet, so SmartScreen may say "Windows protected your PC". Click <b>More info</b>, then <b>Run anyway</b>.</p>
-          </details>
+          <div class="info-box">
+            <div class="info-head">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>First-run notice</span>
+            </div>
+            <p>The installer isn't code-signed yet, so SmartScreen may say <em>"Windows protected your PC"</em>. Click <b>More info</b>, then <b>Run anyway</b>.</p>
+          </div>
         </article>
 
         <article class="platform reveal" id="card-mac">
@@ -347,10 +350,13 @@
             <div><h3>macOS</h3><p>macOS 10.15 or newer · Apple Silicon &amp; Intel</p></div>
           </div>
           <a class="btn btn-primary" id="dl-mac" href="https://github.com/abidkakkur11/damu-companion/releases/latest" rel="noopener"><span><b>Download for Mac</b><small id="meta-mac">.dmg disk image</small></span></a>
-          <details>
-            <summary>First-run warning?</summary>
+          <div class="info-box">
+            <div class="info-head">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>First-run notice</span>
+            </div>
             <p>The app isn't signed with an Apple certificate yet. Drag Damu to Applications, then <b>right-click it and choose Open</b> (once). If macOS says it's "damaged", run <code>xattr -dr com.apple.quarantine /Applications/Damu.app</code> in Terminal.</p>
-          </details>
+          </div>
         </article>
       </div>
       <p class="note">The macOS build is new, so please <a href="https://github.com/abidkakkur11/damu-companion/issues/new/choose" rel="noopener">tell us</a> if anything misbehaves. All versions are on the <a href="https://github.com/abidkakkur11/damu-companion/releases" rel="noopener">releases page</a>.</p>
