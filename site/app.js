@@ -61,10 +61,8 @@
   // ----- Amban preview says things -----
   const ambanLines = [
     "Janga Jaga Jagaa!",
-    "എട മോനേ..! അടുത്ത റിലീസിൽ ഞാൻ വരുന്നുണ്ട്!",
-    "Janga Jaga Jagaa!",
-    "Full-on Aavesham on your desktop!",
-    "ഇനി കളി വേറെ ലെവൽ!"
+    "മൊതലാളീ..! അടുത്ത റിലീസിൽ ഞാൻ വരുന്നുണ്ട്!",
+    "Janga Jaga Jagaa!"
   ];
   let ambanIdx = 0;
   const ambanBtn = $("amban");
