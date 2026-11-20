@@ -26,6 +26,15 @@ A second character, a character switch, and a lighter, steadier app.
 ### Fixed
 - **Movement sometimes sped up:** the "run" fun move after OK sprinted at up to 1.9x by playing the walk faster. It is
   gone; walking speed is now constant, at any frame rate and under CPU load.
+- A bubble timing out while you drag him no longer leaves him "held" with clicks falling through to other apps.
+- A dialogue or switch-off that arrived during the idle animation could be lost if you clicked him; it now always runs.
+- Switching him off and on again quickly no longer strands him off-screen.
+- A dialogue without text no longer freezes him for three minutes.
+- A damaged or hand-edited settings file (including keys like `__proto__`) can no longer stop the app starting, and settings are written atomically and debounced (sliders no longer hit the disk dozens of times a second).
+- One double-click no longer disables the hover reaction for the rest of the session.
+- The walk-out can take longer than 30 s at the slowest speed on a big screen; the hide timer is now 2 minutes.
+- macOS: keeping him on top of full-screen apps no longer hides the Dock icon while Settings is open.
+- A failed voice-clip load is retried instead of being remembered as failed.
 - A second copy of the app no longer flashes windows or a second tray icon before quitting.
 - The character is kept on screen when the display size changes.
 
