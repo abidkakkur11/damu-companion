@@ -3,9 +3,10 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const v1Dir = path.join(root, 'assets', 'v1');
-const posesDir = path.join(root, 'assets', 'poses');
-const facesDir = path.join(root, 'assets', 'faces');
+const damuDir = path.join(root, 'assets', 'characters', 'damu');
+const v1Dir = path.join(damuDir, 'source');
+const posesDir = path.join(damuDir, 'poses');
+const facesDir = path.join(damuDir, 'faces');
 
 fs.mkdirSync(posesDir, { recursive: true });
 fs.mkdirSync(facesDir, { recursive: true });
@@ -115,13 +116,10 @@ async function run() {
     const finalBuffer = await resized.png().toBuffer();
     const finalMeta = await sharp(finalBuffer).metadata();
 
-    const outPng = path.join(posesDir, `${name}.png`);
     const outWebp = path.join(posesDir, `${name}.webp`);
-    await sharp(finalBuffer).png().toFile(outPng);
     await sharp(finalBuffer).webp({ quality: 95 }).toFile(outWebp);
 
     manifest.poses[name] = {
-      png: `poses/${name}.png`,
       webp: `poses/${name}.webp`,
       width: finalMeta.width,
       height: finalMeta.height,
@@ -164,9 +162,6 @@ async function run() {
       await sharp(faceCrop).toFile(path.join(facesDir, 'sad.png'));
     }
   }
-
-  // Also save damu.png as the high-res neutral pose
-  fs.copyFileSync(path.join(posesDir, 'neutral.png'), path.join(root, 'assets', 'damu.png'));
 
   // Save poses manifest
   fs.writeFileSync(path.join(posesDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
