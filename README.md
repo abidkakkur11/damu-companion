@@ -16,10 +16,10 @@
 
 </div>
 
-Damu is a small animated character who lives on your desktop. Every so often he walks over, shows a
-speech bubble with a dialogue and plays its voice clip. Press **OK** and another clip plays while he
-cheers or runs off. Click, double-click or drag him and he
-reacts with his own voice. You write the dialogues and supply the audio.
+Damu is a small desktop companion with two characters to choose from: **Ramanan** and **Damu**. Every so often
+the one you picked walks over, shows a speech bubble with a dialogue and plays its voice clip. Press **OK** and
+another clip plays while he cheers or spins around. Click, double-click or drag him and he reacts with his own
+voice. You write the dialogues and supply the audio.
 
 Everything runs locally: no accounts, no telemetry, no network access.
 
@@ -31,8 +31,10 @@ Everything runs locally: no accounts, no telemetry, no network access.
 
 ## Features
 
+- **Two characters:** Ramanan and Damu, switchable any time from Settings or the tray menu.
 - **Dialogues:** text plus matching audio, delivered at an interval you choose.
-- **Fun moves:** after OK he cheers or runs across the screen.
+- **Fun moves:** after OK he cheers or spins around.
+- **Light:** a small installer, little memory, and an idle character costs next to no CPU.
 - **Mouse reactions:** voice clips for click, double-click, dragging, dropping and hovering.
 - **Full control:** a Settings window for visit interval, walking speed, size, off-screen trips and audio.
 - **Show or hide:** switch him off and he walks out of the screen; switch him on and he walks back in.
@@ -73,10 +75,27 @@ Damu sits on top of your windows and never blocks them: clicks pass straight thr
 
 </details>
 
+## Characters
+
+Pick who is on your desktop in **Settings > General**, or from the tray (Windows) / menu-bar (macOS) **Character** menu.
+The change is instant. Each character is a folder in [`assets/characters/`](assets/characters) with his own poses, walk
+cycle, speech-bubble faces, voice clips and `content.json`.
+
+| Character | Poses | Walk cycle | Voice |
+| --- | --- | --- | --- |
+| Ramanan | 8 | 8 frames, cross-faded | text-only for now, add your own clips |
+| Damu | 7 | 16 frames | included |
+
+**Adding a character:** put his artwork in a folder, describe it in `scripts/characters/<id>.json` (see `ramanan.json`),
+then run `npm run character -- <id> <folder>`. It removes the backgrounds (including fake "checkerboard" transparency),
+aligns the walk frames, makes the faces and writes everything under `assets/characters/<id>/`. Add a `content.json`
+and he appears in Settings automatically.
+
 ## Writing your own dialogues
 
-All of Damu's words and sounds live in one file, [`assets/content.json`](assets/content.json). Audio names
-refer to files in [`assets/audio/`](assets/audio) (`.wav` or `.mp3`, name without the extension).
+Each character's words and sounds live in one file, `assets/characters/<id>/content.json`, for example
+[`assets/characters/damu/content.json`](assets/characters/damu/content.json). Audio names refer to files in the same
+character's `audio/` folder (`.wav` or `.mp3`, name without the extension; `npm run audio -- <id>` compresses WAVs to small MP3s). Leave `audio` out for a text-only line.
 
 ```json
 {
@@ -85,7 +104,7 @@ refer to files in [`assets/audio/`](assets/audio) (`.wav` or `.mp3`, name withou
 
   "dialogues": [
     { "text": "Your dialogue text", "audio": "my_clip" },
-    { "text": "Another one", "audio": "other_clip", "pose": "warning", "action": "run" }
+    { "text": "Another one", "audio": "other_clip", "pose": "warning", "action": "spin" }
   ],
 
   "ok": { "label": "OK", "audio": ["promise"] },
@@ -106,7 +125,7 @@ refer to files in [`assets/audio/`](assets/audio) (`.wav` or `.mp3`, name withou
 | `goodbye` | Played when Damu is switched off and walks away (audio keeps playing after he is gone) |
 | `dialogues` | Damu picks one at random (never the same twice in a row), shows the text and plays the audio |
 | `pose` (optional) | `neutral`, `nail-look`, `looking`, `looking-up`, `warning` or `apologies`; random if omitted |
-| `action` (optional) | What he does after OK: `cheer` or `run`; random if omitted |
+| `action` (optional) | What he does after OK: `cheer` or `spin`; random if omitted |
 | `ok.audio` | Clips played when the user presses OK (one at random) |
 | `mouse.*` | Text is optional. With no text, only the sound plays. Empty list = silent |
 
@@ -116,7 +135,7 @@ Restart Damu after editing. In a packaged app the file is inside the installer, 
 
 | Page | What you can change |
 | --- | --- |
-| General | Show Damu, start at login, pause dialogues, test buttons, reset to defaults |
+| General | Character, show on screen, start at login, pause dialogues, test buttons, reset to defaults |
 | Dialogues | Visits on/off, minutes between visits (1-120), "Dialogue now" |
 | Companion | Walking speed (0.4x-3x), size (60%-160%), off-screen trips |
 | Audio | Master switch, volume, dialogue sounds, mouse-reaction sounds, test sound |
@@ -141,9 +160,11 @@ npm start
 | --- | --- |
 | `npm start` | Run Damu in development |
 | `npm run check` | Syntax-check the source files |
+| `npm run test:e2e` | Launch the app and test it end to end (both characters) |
 | `npm run pack` / `npm run pack:mac` | Build an unpacked app in `dist/` (Windows / macOS) |
 | `npm run dist` | Build the Windows installer in `dist/` |
 | `npm run dist:mac` | Build the macOS disk image (must be run on a Mac) |
+| `npm run character -- <id> <folder>` | Build a character's poses, faces and walk frames from raw artwork |
 | `npm run icon` | Regenerate `assets/icon.ico` and `assets/icon-mac.png` from `assets/icon.png` |
 
 The macOS build only works on macOS (it needs Apple's tooling), so releases are built by the
@@ -165,9 +186,11 @@ src/
   settings.html/js    Settings window
   preload*.js         Secure bridges between processes and windows
 assets/
-  content.json        Dialogues, OK audio and mouse reactions
-  audio/              Voice clips
-  anim/ poses/ faces/ Animation frames, poses and speech-bubble faces
+  characters/<id>/    One folder per character:
+    content.json      Dialogues, OK audio and mouse reactions
+    poses/ anim/      Static poses and the walk cycle
+    faces/ audio/     Speech-bubble faces and voice clips
+  fonts/              Bundled Malayalam font
 scripts/              Asset pipeline and packaging helpers
 docs/screenshots/     Images used in this README
 ```

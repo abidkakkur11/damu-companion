@@ -34,8 +34,8 @@ unset the `ELECTRON_RUN_AS_NODE` environment variable.
 | `src/companion.html`, `src/companion.js` | The transparent overlay: Damu's animation, behaviour, dialogues and audio |
 | `src/settings.html`, `src/settings.js` | The Settings window |
 | `src/preload*.js` | Secure bridges between the main process and each window |
-| `assets/content.json` | All dialogue text, OK/goodbye audio and mouse-reaction audio |
-| `assets/` | Poses, animation frames, faces, fonts, voice clips and icons |
+| `assets/characters/<id>/` | One character: `content.json` (text + audio), `poses/`, `anim/`, `faces/`, `audio/` |
+| `assets/fonts/`, `assets/icon*` | Shared font and app icons |
 | `scripts/` | Asset pipeline and packaging helpers |
 | `site/` | The landing page (GitHub Pages) |
 
@@ -43,8 +43,9 @@ unset the `ELECTRON_RUN_AS_NODE` environment variable.
 
 1. Fork the repo and create a branch: `git checkout -b feat/my-change`.
 2. Make your change. Keep it focused; one idea per pull request.
-3. Run `npm run check` (syntax check) and try the change in the real app with `npm start`.
-   The overlay, tray and audio can't be verified by reading code alone.
+3. Run `npm run check` (syntax check) and try the change in the real app with `npm start`. For anything that touches
+   behaviour, also run `npm run test:e2e`: it launches the app and drives it end to end (a few minutes; leave the
+   mouse alone while it runs).
 4. Update `CHANGELOG.md` under **Unreleased** for anything users will notice.
 5. Commit using [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`).
 6. Open a pull request and fill in the template. CI builds the app on Windows and macOS.
@@ -57,9 +58,13 @@ Guidelines:
   in `src/settings.html` with a `data-key`, and a reader in `src/companion.js` via `cfg`.
 - Match the surrounding code style (see `.editorconfig`).
 
-## Dialogues and voice clips
+## Characters, dialogues and voice clips
 
-Put `.wav` or `.mp3` files in `assets/audio/` and reference them by name (no extension) in `assets/content.json`.
+Put `.wav` or `.mp3` files in `assets/characters/<id>/audio/` and reference them by name (no extension) in that
+character's `content.json`. Run `npm run audio -- <id>` to turn WAVs into small mono MP3s (about 8x smaller).
+
+To add a character, describe his artwork in `scripts/characters/<id>.json` and run `npm run character -- <id> <folder>`
+(see the README and `scripts/characters/ramanan.json`), then add a `content.json`. He shows up in Settings by himself.
 See the README for the file format.
 
 Please only contribute artwork or audio you made or have the right to share. Media files are not covered by the
