@@ -1,0 +1,31 @@
+{
+  "name": "Ramanan",
+  "poseHeight": 640,
+  "quality": 86,
+  "poses": {
+    "neutral": "chor",
+    "looking": "alakk",
+    "looking-up": "smile",
+    "nail-look": "soniya",
+    "warning": "standing",
+    "angry": "thakarar",
+    "apologies": "smile",
+    "cheer": {
+      "file": "jangajaga",
+      "matchBody": true,
+      "noFace": true
+    }
+  },
+  "walk": {
+    "sheet": "walking-sheet",
+    "frames": 8,
+    "height": 440,
+    "fps": 10,
+    "stride": 120,
+    "blend": true,
+    "grounded": [
+      0,
+      7
+    ]
+  }
+}

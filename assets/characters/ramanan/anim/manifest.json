@@ -1,0 +1,26 @@
+{
+  "animations": {
+    "walk": {
+      "frames": [
+        "walk/0000.webp",
+        "walk/0001.webp",
+        "walk/0002.webp",
+        "walk/0003.webp",
+        "walk/0004.webp",
+        "walk/0005.webp",
+        "walk/0006.webp",
+        "walk/0007.webp"
+      ],
+      "loop": true,
+      "width": 226,
+      "height": 440,
+      "fps": 10,
+      "stride": 120,
+      "blend": true,
+      "grounded": [
+        0,
+        7
+      ]
+    }
+  }
+}
