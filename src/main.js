@@ -5,7 +5,8 @@ const fs = require("node:fs");
 
 const isMac = process.platform === "darwin";
 
-if (!app.requestSingleInstanceLock()) app.quit();
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) app.quit();
 app.setAppUserModelId("net.expedigit.damu");
 
 // Serve src/ and assets/ over app://damu so the renderer is same-origin (canvas stays untainted).
@@ -24,7 +25,7 @@ function handleAppProtocol(request) {
     return new Response("forbidden", { status: 403 });
   }
   if (!fs.existsSync(file)) {
-    console.error(`[protocol] 404 Not Found: ${request.url} -> ${file}`);
+    if (!rel.includes("/audio/")) console.error(`[protocol] 404 Not Found: ${request.url} -> ${file}`); // a missing clip is probed (.mp3 then .wav) on purpose
     return new Response("not found", { status: 404 });
   }
   return net.fetch(pathToFileURL(file).href);
@@ -38,7 +39,16 @@ const LINKS = {
   author: "https://abidkp.com",
 };
 
+// Characters live in assets/characters/<id>/ (character.json + poses, anim, faces, audio, content.json).
+const CHAR_DIR = path.join(APP_ROOT, "assets", "characters");
+const DEFAULT_CHARACTER = "ramanan";
+const characters = fs.readdirSync(CHAR_DIR)
+  .filter((id) => fs.existsSync(path.join(CHAR_DIR, id, "character.json")))
+  .map((id) => JSON.parse(fs.readFileSync(path.join(CHAR_DIR, id, "character.json"), "utf8")))
+  .sort((a, b) => (b.id === DEFAULT_CHARACTER) - (a.id === DEFAULT_CHARACTER) || a.name.localeCompare(b.name));
+
 const DEFAULTS = {
+  character: DEFAULT_CHARACTER, // who is on screen
   firstRun: true,
   visible: true,            // companion on screen
   paused: false,            // pause dialogue visits
@@ -67,13 +77,15 @@ const settingsFile = () => path.join(app.getPath("userData"), "settings.json");
 function sanitize(patch) {
   const out = {};
   for (const [key, value] of Object.entries(patch || {})) {
-    if (!(key in DEFAULTS) || key === "firstRun") continue;
-    if (key in RANGES) {
+    if (!Object.hasOwn(DEFAULTS, key) || key === "firstRun") continue;
+    if (Object.hasOwn(RANGES, key)) {
       const [lo, hi, int] = RANGES[key];
       let n = Number(value);
       if (!Number.isFinite(n)) continue;
       n = Math.min(hi, Math.max(lo, n));
       out[key] = int ? Math.round(n) : n;
+    } else if (key === "character") {
+      if (characters.some((c) => c.id === value)) out[key] = value;
     } else if (typeof value === typeof DEFAULTS[key]) {
       out[key] = value;
     }
@@ -85,11 +97,23 @@ function loadSettings() {
   const firstRun = !fs.existsSync(settingsFile());
   let saved = {};
   try { saved = JSON.parse(fs.readFileSync(settingsFile(), "utf8")); } catch {}
-  settings = { ...DEFAULTS, ...sanitize(saved), firstRun };
+  try { settings = { ...DEFAULTS, ...sanitize(saved), firstRun }; } catch { settings = { ...DEFAULTS, firstRun }; } // a damaged file must never stop the app starting
+}
+let saveTimer = null;
+function writeSettings() {
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  try {
+    const tmp = settingsFile() + ".tmp";
+    fs.writeFileSync(tmp, JSON.stringify(settings, null, 2));
+    fs.renameSync(tmp, settingsFile()); // replace in one step: a crash can't leave a truncated file
+  } catch {}
 }
 function saveSettings() {
-  try { fs.writeFileSync(settingsFile(), JSON.stringify(settings, null, 2)); } catch {}
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(writeSettings, 300); // sliders fire many updates per second
 }
+app.on("before-quit", () => { if (saveTimer) writeSettings(); });
 
 // ----- Companion (overlay) window -----
 function createWindow() {
@@ -119,7 +143,7 @@ function keepOnTop() {
   if (!win || win.isDestroyed()) return;
   if (isMac) {
     win.setAlwaysOnTop(true, "screen-saver");
-    win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true });
   } else {
     win.setAlwaysOnTop(true);
   }
@@ -159,7 +183,7 @@ function applyVisibility() {
     send("enter");
   } else {
     send("leave");
-    hideTimer = setTimeout(() => { if (!settings.visible) win.hide(); }, 30_000); // fallback if he never reports back
+    hideTimer = setTimeout(() => { if (!settings.visible) win.hide(); }, 120_000); // fallback if he never reports back
   }
 }
 
@@ -175,13 +199,15 @@ function update(patch) {
   const changed = (...keys) => keys.some((k) => prev[k] !== settings[k]);
   saveSettings();
   if (changed("paused", "dialoguesEnabled", "visitMinutes")) scheduleVisit();
-  buildMenu();
+  if (changed("visible", "paused", "audioEnabled", "character")) buildMenu();
   broadcast();
   if (changed("visible")) applyVisibility();
+  if (changed("character")) tray?.setImage(trayIcon());
 }
 
 ipcMain.handle("settings:get", () => ({
   settings,
+  characters,
   platform: process.platform,
   loginItem: app.getLoginItemSettings().openAtLogin,
   version: app.getVersion(),
@@ -251,8 +277,9 @@ function openSettings() {
 
 // ----- Tray -----
 function trayIcon() {
-  const img = nativeImage.createFromPath(path.join(__dirname, "..", "assets", "tray.png"));
-  return isMac ? img.resize({ height: 18 }) : img;
+  const face = path.join(CHAR_DIR, settings.character, "faces", "neutral.png");
+  const img = nativeImage.createFromPath(fs.existsSync(face) ? face : path.join(__dirname, "..", "assets", "tray.png"));
+  return img.resize({ height: isMac ? 18 : 32 });
 }
 
 function buildMenu() {
@@ -260,7 +287,11 @@ function buildMenu() {
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: "Open Damu settings", click: openSettings },
     { type: "separator" },
-    { label: "Show Damu", type: "checkbox", checked: settings.visible, click: (i) => update({ visible: i.checked }) },
+    {
+      label: "Character",
+      submenu: characters.map((c) => ({ label: c.name, type: "radio", checked: settings.character === c.id, click: () => update({ character: c.id }) })),
+    },
+    { label: "Show on screen", type: "checkbox", checked: settings.visible, click: (i) => update({ visible: i.checked }) },
     { label: "Pause dialogues", type: "checkbox", checked: settings.paused, click: (i) => update({ paused: i.checked }) },
     { label: "Sound", type: "checkbox", checked: settings.audioEnabled, click: (i) => update({ audioEnabled: i.checked }) },
     { type: "separator" },
@@ -285,6 +316,7 @@ function buildAppMenu() {
 }
 
 app.whenReady().then(() => {
+  if (!gotLock) return;
   if (isMac) {
     app.setActivationPolicy("accessory"); // tray app: no Dock icon until Settings opens
     app.dock?.hide();
