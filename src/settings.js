@@ -30,6 +30,7 @@ function toast(text = "Saved") {
 }
 
 function render() {
+  renderChars();
   for (const el of document.querySelectorAll("[data-key]")) {
     const value = settings[el.dataset.key];
     if (el === document.activeElement && el.type === "range") continue; // don't fight the user's drag
@@ -48,6 +49,32 @@ function render() {
   }
   for (const el of document.querySelectorAll("[data-dim]")) {
     el.style.opacity = settings[el.dataset.dim] ? 0.5 : "";
+  }
+}
+
+// ----- Character picker -----
+function renderChars() {
+  for (const btn of document.querySelectorAll("#chars .char")) btn.setAttribute("aria-checked", String(btn.dataset.id === settings.character));
+}
+function buildChars(list) {
+  const box = document.getElementById("chars");
+  for (const c of list) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "char";
+    btn.dataset.id = c.id;
+    btn.setAttribute("role", "radio");
+    const img = document.createElement("img");
+    img.src = `../assets/characters/${c.id}/faces/neutral.png`;
+    img.alt = "";
+    btn.append(img, c.name);
+    btn.addEventListener("click", () => {
+      if (settings.character === c.id) return;
+      settings = { ...settings, character: c.id };
+      renderChars();
+      api.set({ character: c.id }).then(() => toast(`${c.name} is on screen`));
+    });
+    box.append(btn);
   }
 }
 
@@ -91,6 +118,7 @@ api.onChanged((s) => { settings = s; render(); });
 
 api.get().then((info) => {
   settings = info.settings;
+  buildChars(info.characters);
   document.getElementById("login").checked = info.loginItem;
   document.getElementById("ver").textContent = `Version ${info.version}`;
   document.getElementById("aboutVer").textContent = info.version;
