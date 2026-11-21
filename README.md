@@ -83,7 +83,7 @@ cycle, speech-bubble faces, voice clips and `content.json`.
 
 | Character | Poses | Walk cycle | Voice |
 | --- | --- | --- | --- |
-| Ramanan | 8 | 8 frames, cross-faded | text-only for now, add your own clips |
+| Ramanan | 10 | 12 frames, from a real walk | intro clip included, add more in his content.json |
 | Damu | 7 | 16 frames | included |
 
 **Adding a character:** put his artwork in a folder, describe it in `scripts/characters/<id>.json` (see `ramanan.json`),

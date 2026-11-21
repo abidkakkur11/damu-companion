@@ -52,7 +52,7 @@ const LOOKING_UP_FOR = [3, 5];
 const OFFSCREEN_AWAY_FOR = [10, 20]; // seconds Damu stays away outside the screen
 const DIALOGUE_TIMEOUT = 180_000; // an unanswered dialogue is dismissed after this long
 
-const DIALOGUE_POSES = ["looking-up", "warning", "nail-look", "looking"];
+const DIALOGUE_POSES = ["looking-up", "warning", "nail-look", "looking", "laughing"]; // missing ones are skipped
 const FUN_ACTIONS = ["cheer", "spin"];
 
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
@@ -686,8 +686,9 @@ function visit(manual = false) {
 function greet() {
   const g = content.greeting;
   if (!g) return;
-  setPose("looking");
-  say(g.text, { face: "looking", ms: 5000 });
+  const pose = poses[g.pose] ? g.pose : "looking"; // content.json may pick the intro picture
+  setPose(pose);
+  say(g.text, { face: faceFor(pose), ms: 5000 });
   playClip(g.audio, "soundDialogues");
 }
 
@@ -709,10 +710,11 @@ function react(kind) {
 
   if (kind === "click") {
     // Startled reaction
-    setPose("apologies");
+    const pose = poses.confused ? "confused" : "apologies";
+    setPose(pose);
     doHop(26, 0.36);
     const entry = playEntry(content.mouse.click, "click");
-    say(entry?.text, { face: "apologies", ms: 3500 });
+    say(entry?.text, { face: pose, ms: 3500 });
     nextAt = performance.now() + 3000;
   } else if (kind === "dblclick") {
     // Angry clenched fists with tremor

@@ -65,9 +65,9 @@ try {
   check("Ramanan is the default character", (await C.ev("cfg.character")) === "ramanan" && (await S.ev("settingsApi.get().then(r => r.settings.character)")) === "ramanan");
   await loaded("ramanan");
   const pn = await C.ev("Object.keys(poses).sort().join(',')");
-  check("8 poses loaded (7 standard + cheer)", pn === "angry,apologies,cheer,looking,looking-up,neutral,nail-look,warning".split(",").sort().join(","), pn);
-  check("walk cycle: 8 cross-faded frames", (await C.ev("anims.walk.frames.length")) === 8 && (await C.ev("anims.walk.blend")) === true);
-  check("walk uses the character's own stride and grounded frames", (await C.ev("anims.walk.stride")) === 120 && (await C.ev("JSON.stringify(anims.walk.grounded)")) === "[0,7]");
+  check("10 poses loaded", pn === "angry,apologies,cheer,confused,laughing,looking,looking-up,neutral,nail-look,warning".split(",").sort().join(","), pn);
+  check("walk cycle: 12 frames from the walking video", (await C.ev("anims.walk.frames.length")) === 12 && (await C.ev("anims.walk.blend")) === true);
+  check("walk uses the character's own stride and grounded frames", (await C.ev("anims.walk.stride")) === 190 && (await C.ev("JSON.stringify(anims.walk.grounded)")) === "[0,6]");
   const greeted = await waitFor(() => C.ev("bubble.style.display === 'flex' && bubbleText.textContent === content.greeting.text"), 45000, 100);
   check("greets with the text from his content.json after walking in", !!greeted, await C.ev("content.greeting.text"));
 
@@ -136,7 +136,7 @@ try {
   let p = await point();
   await mouse("mousePressed", p.x, p.y); await mouse("mouseReleased", p.x, p.y);
   await sleep(700);
-  check("single click: apologetic pose and a line from his content", (await C.ev("currentPose")) === "apologies" && (await C.ev("bubble.style.display === 'flex'")) === true);
+  check("single click: confused pose and a line from his content", (await C.ev("currentPose")) === "confused" && (await C.ev("bubble.style.display === 'flex'")) === true);
   await C.ev(idle); p = await point();
   await mouse("mousePressed", p.x, p.y); await mouse("mouseReleased", p.x, p.y); await sleep(60);
   await mouse("mousePressed", p.x, p.y, { clickCount: 2 }); await mouse("mouseReleased", p.x, p.y, { clickCount: 2 });

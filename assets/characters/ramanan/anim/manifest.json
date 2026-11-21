@@ -9,17 +9,21 @@
         "walk/0004.webp",
         "walk/0005.webp",
         "walk/0006.webp",
-        "walk/0007.webp"
+        "walk/0007.webp",
+        "walk/0008.webp",
+        "walk/0009.webp",
+        "walk/0010.webp",
+        "walk/0011.webp"
       ],
       "loop": true,
-      "width": 226,
+      "width": 222,
       "height": 440,
-      "fps": 10,
-      "stride": 120,
+      "fps": 12,
+      "stride": 190,
       "blend": true,
       "grounded": [
         0,
-        7
+        6
       ]
     }
   }

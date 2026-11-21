@@ -9,7 +9,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 A second character, a character switch, and a lighter, steadier app.
 
 ### Added
-- **Ramanan**, a new character with eight poses (including a towel-waving cheer) and a smooth, cross-faded walk cycle.
+- **Ramanan**, a new character with ten poses (including angry, confused, laughing and a towel-waving cheer that introduces him, with his intro voice clip) and a natural walk cycle built from a video of a real walk.
   He is the default; his dialogues are text-only until you add voice clips.
 - **Character switch** in Settings > General (a card per character) and in the tray / menu-bar menu. The change is live
   and the tray icon follows the character.

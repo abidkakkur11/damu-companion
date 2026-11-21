@@ -5,7 +5,7 @@
     "dialogues: he comes to you, shows the text (and plays its audio) and waits for OK. Optional \"pose\" and \"action\" (cheer, spin).",
     "ok: the button label and the clip played on OK. mouse: click, dblclick, dragStart, drop, hover. goodbye: when he is switched off."
   ],
-  "greeting": { "text": "Namaskaaram! Njan Ramanan." },
+  "greeting": { "text": "Namaskaaram! Njan Ramanan.", "audio": "intro", "pose": "cheer" },
   "goodbye": { "text": "Pinne kaanaam!" },
   "dialogues": [
     { "text": "Enthokke und vishesham?" },
