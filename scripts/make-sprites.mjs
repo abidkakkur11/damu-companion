@@ -7,7 +7,7 @@
 //
 // Per source: extract frames with ffmpeg -> remove background with a segmentation model.
 // Per clip:   crop every frame to the clip's common bounding box -> WebP frames in
-//             assets/anim/<clip>/ and an entry in assets/anim/manifest.json.
+//             assets/characters/damu/anim/<clip>/ and an entry in its manifest.json.
 import { removeBackground } from "@imgly/background-removal-node";
 import ffmpegPath from "ffmpeg-static";
 import { execFileSync } from "node:child_process";
@@ -22,7 +22,7 @@ const sharp = createRequire(import.meta.resolve("@imgly/background-removal-node"
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const clipsDir = path.resolve(root, "..", "damu");
 const work = path.join(root, ".work");
-const outRoot = path.join(root, "assets", "anim");
+const outRoot = path.join(root, "assets", "characters", "damu", "anim");
 
 const SCALE = 0.4; // stored frame = source * SCALE
 const STAND_HEIGHT = 210; // on-screen height (CSS px) of a standing Damu

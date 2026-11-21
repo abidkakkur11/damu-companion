@@ -76,6 +76,13 @@
   .actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px; }
   :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
+  /* Character picker */
+  .chars { display: flex; gap: 14px; padding: 16px 18px; flex-wrap: wrap; }
+  .char { display: flex; align-items: center; gap: 12px; padding: 10px 20px 10px 10px; border: 2px solid var(--line); border-radius: 18px; background: var(--bg); color: var(--ink); font-weight: 700; font-size: 15px; font-family: inherit; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+  .char:hover { border-color: var(--green-hi); }
+  .char img { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; object-position: 50% 28%; background: #fff; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .25); }
+  .char[aria-checked="true"] { border-color: var(--green); box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 28%, transparent); }
+
   /* Prose pages */
   .prose { user-select: text; }
   .prose h3 { margin: 22px 0 4px; font-size: 15px; }
@@ -119,18 +126,21 @@
   <!-- GENERAL -->
   <section id="general" class="active">
     <h1>General</h1>
-    <p class="lead">Damu lives on your desktop and drops by to tell you things. Changes apply instantly.</p>
+    <p class="lead">Your companion lives on your desktop and drops by to tell you things. Changes apply instantly.</p>
+    <h2 style="margin-top:0">Character</h2>
+    <div class="card"><div class="chars" id="chars" role="radiogroup" aria-label="Character"></div></div>
+    <h2>Options</h2>
     <div class="card">
       <div class="row">
-        <div><div class="t">Show Damu on screen</div><div class="d">Off: he walks off the screen and stays away until you turn this on.</div></div>
-        <label class="switch"><input type="checkbox" data-key="visible" aria-label="Show Damu on screen"><i></i></label>
+        <div><div class="t">Show on screen</div><div class="d">Off: he walks off the screen and stays away until you turn this on.</div></div>
+        <label class="switch"><input type="checkbox" data-key="visible" aria-label="Show on screen"><i></i></label>
       </div>
       <div class="row">
         <div><div class="t">Start at login</div><div class="d">Launch Damu automatically when you sign in to your computer.</div></div>
         <label class="switch"><input type="checkbox" id="login" aria-label="Start at login"><i></i></label>
       </div>
       <div class="row">
-        <div><div class="t">Pause dialogues</div><div class="d">Damu stops dropping by with dialogues until you switch this off.</div></div>
+        <div><div class="t">Pause dialogues</div><div class="d">He stops dropping by with dialogues until you switch this off.</div></div>
         <label class="switch"><input type="checkbox" data-key="paused" aria-label="Pause dialogues"><i></i></label>
       </div>
     </div>
@@ -155,11 +165,11 @@
   <!-- DIALOGUES -->
   <section id="dialogues">
     <h1>Dialogues</h1>
-    <p class="lead">Every so often Damu walks over, tells you something (with its voice clip) and waits for you to press OK. Then he does something fun.</p>
+    <p class="lead">Every so often he walks over, tells you something (with its voice clip) and waits for you to press OK. Then he does something fun.</p>
     <div class="card" data-dim="paused">
       <div class="row">
-        <div><div class="t">Damu visits with a dialogue</div><div class="d">Switch off if you'd rather he just wanders around.</div></div>
-        <label class="switch"><input type="checkbox" data-key="dialoguesEnabled" aria-label="Damu visits with a dialogue"><i></i></label>
+        <div><div class="t">Visits with a dialogue</div><div class="d">Switch off if you'd rather he just wanders around.</div></div>
+        <label class="switch"><input type="checkbox" data-key="dialoguesEnabled" aria-label="Visits with a dialogue"><i></i></label>
       </div>
       <div class="row" data-requires="dialoguesEnabled">
         <div><div class="t">Visit every</div><div class="d">On average. Each visit comes a little earlier or later.</div></div>
@@ -173,14 +183,14 @@
   <!-- COMPANION -->
   <section id="companion">
     <h1>Companion</h1>
-    <p class="lead">How Damu looks and moves around your screen.</p>
+    <p class="lead">How he looks and moves around your screen.</p>
     <div class="card">
       <div class="row">
         <div><div class="t">Walking speed</div><div class="d">How fast he moves around.</div></div>
         <div class="ctl"><input type="range" min="0.4" max="3" step="0.1" data-key="walkSpeed" data-fmt="x" aria-label="Walking speed"><span class="out" data-out="walkSpeed"></span></div>
       </div>
       <div class="row">
-        <div><div class="t">Size</div><div class="d">Scale Damu up or down.</div></div>
+        <div><div class="t">Size</div><div class="d">Scale him up or down.</div></div>
         <div class="ctl"><input type="range" min="0.6" max="1.6" step="0.05" data-key="size" data-fmt="pct" aria-label="Size"><span class="out" data-out="size"></span></div>
       </div>
       <div class="row">
@@ -193,10 +203,10 @@
   <!-- AUDIO -->
   <section id="audio">
     <h1>Audio</h1>
-    <p class="lead">Damu's voice clips. Each dialogue plays its own clip; reactions pick one at random.</p>
+    <p class="lead">Voice clips. Each dialogue plays its own clip; reactions pick one at random.</p>
     <div class="card">
       <div class="row">
-        <div><div class="t">Enable audio</div><div class="d">Master switch for all of Damu's sounds.</div></div>
+        <div><div class="t">Enable audio</div><div class="d">Master switch for all sounds.</div></div>
         <label class="switch"><input type="checkbox" data-key="audioEnabled" aria-label="Enable audio"><i></i></label>
       </div>
       <div class="row" data-requires="audioEnabled">
@@ -245,10 +255,10 @@
     </div>
 
     <h3>What is Damu?</h3>
-    <p>Damu is a small animated character who walks onto your screen every so often, tells you something with a voice clip and a speech bubble, and waits for you to press OK. Then he does something fun: cheers or runs. You can click, double-click and drag him too, and he reacts.</p>
+    <p>Damu is a small animated companion (pick Ramanan or Damu in Settings) who walks onto your screen every so often, tells you something with a voice clip and a speech bubble, and waits for you to press OK. Then he does something fun: cheers or runs. You can click, double-click and drag him too, and he reacts.</p>
     <h3>Good to know</h3>
     <ul>
-      <li>Damu sits on top of your windows but never blocks them: clicks pass straight through everywhere except on Damu himself.</li>
+      <li>Damu sits on top of your windows but never blocks them: clicks pass straight through everywhere except on the character himself.</li>
       <li>Find him in the system tray (Windows) or menu bar (macOS) to open Settings, pause dialogues or quit.</li>
       <li>Closing this window doesn't quit Damu. Use <em>Quit Damu</em> from the tray or menu bar.</li>
     </ul>
@@ -276,7 +286,7 @@
 
     <h3>What Damu can see</h3>
     <ul>
-      <li>Damu draws a transparent window over your screen. It only reacts to your mouse pointer while it is over Damu himself (to let you click, drag and hover over him, and to make him glance toward the pointer). Pointer position is used on the spot and never stored or sent anywhere.</li>
+      <li>Damu draws a transparent window over your screen. It only reacts to your mouse pointer while it is over the character himself (to let you click, drag and hover over him, and to make him glance toward the pointer). Pointer position is used on the spot and never stored or sent anywhere.</li>
       <li>Damu does <b>not</b> take screenshots, record the screen, log keystrokes, read the clipboard, or access your files, other windows, camera or microphone.</li>
     </ul>
 

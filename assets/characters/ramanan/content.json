@@ -1,0 +1,24 @@
+{
+  "_help": [
+    "Everything Ramanan says and plays. Audio names refer to files in assets/characters/ramanan/audio/ (.wav or .mp3);",
+    "leave out \"audio\" for a text-only line. The text below is a starting point: replace it with your own.",
+    "dialogues: he comes to you, shows the text (and plays its audio) and waits for OK. Optional \"pose\" and \"action\" (cheer, spin).",
+    "ok: the button label and the clip played on OK. mouse: click, dblclick, dragStart, drop, hover. goodbye: when he is switched off."
+  ],
+  "greeting": { "text": "Namaskaaram! Njan Ramanan.", "audio": "intro", "pose": "cheer" },
+  "goodbye": { "text": "Pinne kaanaam!" },
+  "dialogues": [
+    { "text": "Enthokke und vishesham?" },
+    { "text": "Vellam kudichille?", "pose": "warning" },
+    { "text": "Oru chaya kudichittu pani thudaram, alle?" },
+    { "text": "Njan ivide thanne und, vilichal mathi.", "pose": "looking" }
+  ],
+  "ok": { "label": "OK" },
+  "mouse": {
+    "click": [{ "text": "Ayyo!" }, { "text": "Entha?" }],
+    "dblclick": [{ "text": "Pinne enthaanu?" }, { "text": "Ithu kollaallo!" }],
+    "dragStart": [],
+    "drop": [],
+    "hover": []
+  }
+}

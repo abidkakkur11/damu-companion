@@ -4,7 +4,47 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
-## [2.0.1] - Unreleased
+## [3.0.0] - Unreleased
+
+A second character, a character switch, and a lighter, steadier app.
+
+### Added
+- **Ramanan**, a new character with ten poses (including angry, confused, laughing and a towel-waving cheer that introduces him, with his intro voice clip) and a natural walk cycle built from a video of a real walk.
+  He is the default; his dialogues are text-only until you add voice clips.
+- **Character switch** in Settings > General (a card per character) and in the tray / menu-bar menu. The change is live
+  and the tray icon follows the character.
+- `npm run character`: builds a character from raw artwork (background removal, walk-frame alignment, faces).
+- A "spin" fun move after OK, and a `cheer` pose for characters that have one.
+
+### Changed
+- Assets moved to `assets/characters/<id>/` (poses, anim, faces, audio, `content.json`).
+- Voice clips are loaded the first time they are needed, not all at start-up, and Damu's are now small MP3s (10.7 MB of WAV became 0.7 MB). `npm run audio` does this for any character.
+- A standing character renders at about 30 fps and a parked (off-screen) one at about 4 fps, instead of 60 always.
+- Smaller app: maximum installer compression, unused language packs and legacy images removed, unused build tools dropped.
+- Updated build tooling (electron-builder 26, sharp 0.35) and GitHub Actions versions.
+
+### Fixed
+- **Movement sometimes sped up:** the "run" fun move after OK sprinted at up to 1.9x by playing the walk faster. It is
+  gone; walking speed is now constant, at any frame rate and under CPU load.
+- A bubble timing out while you drag him no longer leaves him "held" with clicks falling through to other apps.
+- A dialogue or switch-off that arrived during the idle animation could be lost if you clicked him; it now always runs.
+- Switching him off and on again quickly no longer strands him off-screen.
+- A dialogue without text no longer freezes him for three minutes.
+- A damaged or hand-edited settings file (including keys like `__proto__`) can no longer stop the app starting, and settings are written atomically and debounced (sliders no longer hit the disk dozens of times a second).
+- One double-click no longer disables the hover reaction for the rest of the session.
+- The walk-out can take longer than 30 s at the slowest speed on a big screen; the hide timer is now 2 minutes.
+- macOS: keeping him on top of full-screen apps no longer hides the Dock icon while Settings is open.
+- A failed voice-clip load is retried instead of being remembered as failed.
+- A second copy of the app no longer flashes windows or a second tray icon before quitting.
+- The character is kept on screen when the display size changes.
+
+### Removed
+- The speed-boost "run" move, and unused assets (duplicate PNG poses, legacy faces, the old avatar script).
+
+## [2.0.1] - 2026-11-01
+
+### Fixed
+- The documented minimum macOS version was wrong: the bundled Electron 33 needs macOS 11 (Big Sur) or newer, not 10.15.
 
 ### Added
 - **Landing page:** Damu says his intro when the visitor first scrolls (or on their first click or tap, if the browser blocks sound), with a Mute / Unmute button. It plays once per visit and remembers a mute.

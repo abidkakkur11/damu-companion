@@ -1,0 +1,32 @@
+{
+  "name": "Ramanan",
+  "poseHeight": 640,
+  "quality": 86,
+  "poses": {
+    "neutral": "chor",
+    "looking": "alakk",
+    "looking-up": "smile",
+    "nail-look": "soniya",
+    "warning": "standing",
+    "confused": "thakarar",
+    "angry": "angry",
+    "laughing": "laughing",
+    "apologies": "smile",
+    "cheer": {
+      "file": "jangajaga",
+      "matchBody": true,
+      "noFace": true
+    }
+  },
+  "walk": {
+    "video": "ramanan-walking.mp4",
+    "from": 3.608,
+    "cycle": 1,
+    "frames": 12,
+    "height": 440,
+    "fps": 12,
+    "stride": 190,
+    "blend": true,
+    "grounded": [0, 6]
+  }
+}

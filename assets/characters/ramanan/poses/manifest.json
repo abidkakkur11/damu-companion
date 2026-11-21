@@ -1,0 +1,64 @@
+{
+  "poses": {
+    "neutral": {
+      "webp": "poses/neutral.webp",
+      "width": 226,
+      "height": 640,
+      "aspect": 0.3531
+    },
+    "looking": {
+      "webp": "poses/looking.webp",
+      "width": 238,
+      "height": 643,
+      "aspect": 0.3701
+    },
+    "looking-up": {
+      "webp": "poses/looking-up.webp",
+      "width": 230,
+      "height": 645,
+      "aspect": 0.3566
+    },
+    "nail-look": {
+      "webp": "poses/nail-look.webp",
+      "width": 237,
+      "height": 639,
+      "aspect": 0.3709
+    },
+    "warning": {
+      "webp": "poses/warning.webp",
+      "width": 269,
+      "height": 643,
+      "aspect": 0.4184
+    },
+    "confused": {
+      "webp": "poses/confused.webp",
+      "width": 235,
+      "height": 639,
+      "aspect": 0.3678
+    },
+    "angry": {
+      "webp": "poses/angry.webp",
+      "width": 241,
+      "height": 508,
+      "aspect": 0.4744
+    },
+    "laughing": {
+      "webp": "poses/laughing.webp",
+      "width": 216,
+      "height": 507,
+      "aspect": 0.426
+    },
+    "apologies": {
+      "webp": "poses/looking-up.webp",
+      "width": 230,
+      "height": 645,
+      "aspect": 0.3566
+    },
+    "cheer": {
+      "webp": "poses/cheer.webp",
+      "width": 476,
+      "height": 810,
+      "aspect": 0.5877
+    }
+  }
+}

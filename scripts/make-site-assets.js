@@ -12,7 +12,7 @@ const out = path.join(root, "site", "assets");
 
   // Poses (already trimmed, transparent)
   for (const pose of ["neutral", "looking-up", "warning", "nail-look"]) {
-    await sharp(path.join(root, "assets", "poses", `${pose}.webp`)).resize({ height: 640 }).webp({ quality: 88 }).toFile(path.join(out, `damu-${pose}.webp`));
+    await sharp(path.join(root, "assets", "characters", "damu", "poses", `${pose}.webp`)).resize({ height: 640 }).webp({ quality: 88 }).toFile(path.join(out, `damu-${pose}.webp`));
   }
 
   // Screenshots
@@ -47,9 +47,11 @@ const out = path.join(root, "site", "assets");
   try {
     const { spawnSync } = require("node:child_process");
     const ffmpeg = require("ffmpeg-static");
-    const src = path.join(root, "assets", "audio", "intro.wav");
-    if (ffmpeg && fs.existsSync(src)) {
-      spawnSync(ffmpeg, ["-y", "-loglevel", "error", "-i", src, "-ac", "1", "-ar", "44100", "-b:a", "80k", path.join(out, "intro.mp3")]);
+    const dir = path.join(root, "assets", "characters", "damu", "audio");
+    if (fs.existsSync(path.join(dir, "intro.mp3"))) {
+      fs.copyFileSync(path.join(dir, "intro.mp3"), path.join(out, "intro.mp3")); // already a small mp3
+    } else if (ffmpeg && fs.existsSync(path.join(dir, "intro.wav"))) {
+      spawnSync(ffmpeg, ["-y", "-loglevel", "error", "-i", path.join(dir, "intro.wav"), "-ac", "1", "-ar", "44100", "-b:a", "80k", path.join(out, "intro.mp3")]);
     }
   } catch {}
 

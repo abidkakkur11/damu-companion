@@ -1,12 +1,27 @@
 const avatar = document.getElementById("avatar");
 const canvas = document.getElementById("sprite");
-const ctx = canvas.getContext("2d", { willReadFrequently: true });
+const ctx = canvas.getContext("2d"); // the visible sprite: GPU-accelerated, so cross-fading every frame is cheap
+// A tiny second canvas for click-through hit tests. Reading pixels back from the visible canvas would force it
+// into slow software mode, so the hit test reads this one, which is redrawn only when the picture changes.
+const hitCanvas = document.createElement("canvas");
+const hitCtx = hitCanvas.getContext("2d", { willReadFrequently: true });
+const HIT_WIDTH = 96;
+function drawHit(bmp) {
+  const h = Math.max(1, Math.round((HIT_WIDTH * bmp.height) / bmp.width));
+  if (hitCanvas.width !== HIT_WIDTH || hitCanvas.height !== h) {
+    hitCanvas.width = HIT_WIDTH;
+    hitCanvas.height = h;
+  } else {
+    hitCtx.clearRect(0, 0, HIT_WIDTH, h);
+  }
+  hitCtx.drawImage(bmp, 0, 0, HIT_WIDTH, h);
+}
 const bubble = document.getElementById("bubble");
 const bubbleText = document.getElementById("text");
 const bubbleRow = document.getElementById("row");
 const faceImg = document.getElementById("faceImg");
 
-const ASSETS = "../assets";
+let ASSETS = "../assets/characters/damu"; // set from the chosen character at start-up
 
 // Walking simulation parameters calibrated for realistic human stride
 const BASE_WALK_SPEED = 92; // px/s on desktop (casual stroll)
@@ -15,11 +30,10 @@ const BASE_WALK_ACCEL = 260; // px/s² smooth acceleration
 const BASE_WALK_DECEL = 320; // px/s² smooth deceleration
 const BASE_DISPLAY_HEIGHT = 260; // on-screen height in CSS px at size 1.0
 const ANIM_BOOST = 1.5; // frame animations play this much faster than authored
-const RUN_BOOST = 1.9; // walking speed multiplier during the "run" fun move
 
 // User settings (pushed from the main process; see applySettings)
 let cfg = {
-  visible: true, dialoguesEnabled: true, walkSpeed: 1.3, size: 1, offscreenTrips: true,
+  character: "ramanan", visible: true, dialoguesEnabled: true, walkSpeed: 1.3, size: 1, offscreenTrips: true,
   audioEnabled: true, volume: 0.8, soundDialogues: true, soundReactions: true,
 };
 // Derived values: speed scales the walk, size scales the sprite and its stride so feet never slide.
@@ -38,8 +52,8 @@ const LOOKING_UP_FOR = [3, 5];
 const OFFSCREEN_AWAY_FOR = [10, 20]; // seconds Damu stays away outside the screen
 const DIALOGUE_TIMEOUT = 180_000; // an unanswered dialogue is dismissed after this long
 
-const DIALOGUE_POSES = ["looking-up", "warning", "nail-look", "looking"];
-const FUN_ACTIONS = ["cheer", "run"];
+const DIALOGUE_POSES = ["looking-up", "warning", "nail-look", "looking", "laughing"]; // missing ones are skipped
+const FUN_ACTIONS = ["cheer", "spin"];
 
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
 const rand = ([lo, hi]) => (lo + Math.random() * (hi - lo)) * 1000;
@@ -52,7 +66,7 @@ function pickNoRepeat(list, key) {
   return (lastPicked[key] = pick(fresh));
 }
 
-// ----- Content (assets/content.json): everything Damu says and plays -----
+// ----- Content (assets/characters/<id>/content.json): everything the character says and plays -----
 let content = { greeting: null, goodbye: null, dialogues: [], ok: { label: "OK", audio: [] }, mouse: {} };
 
 async function loadContent() {
@@ -67,7 +81,7 @@ async function loadContent() {
   content = {
     greeting: raw.greeting ? entry(raw.greeting) : null,
     goodbye: raw.goodbye ? entry(raw.goodbye) : null,
-    dialogues: list(raw.dialogues).filter((d) => d.text || d.audio),
+    dialogues: list(raw.dialogues).filter((d) => d.text), // the bubble carries the OK button, so a dialogue needs text
     ok: { label: raw.ok?.label || "OK", audio: [].concat(raw.ok?.audio || []) },
     mouse: {
       click: list(raw.mouse?.click), dblclick: list(raw.mouse?.dblclick),
@@ -79,9 +93,8 @@ async function loadContent() {
 // Loaded poses: name -> { bitmap, width, height, aspect }
 let poses = {};
 let currentPose = "neutral";
-let nextPose = "neutral";
 
-// Frame animations from assets/anim: name -> { frames: ImageBitmap[], width, height, fps, loop }
+// Frame animations from <character>/anim: name -> { frames: ImageBitmap[], width, height, fps, loop, stride, grounded, blend }
 const anims = {};
 let walkBitmaps = []; // alias of anims.walk.frames
 const walkInfo = { width: 215, height: 438, aspect: 215 / 438, fps: 12 };
@@ -89,13 +102,10 @@ let walkCycleProgress = 0; // 0.0 to 1.0 (loops seamlessly)
 let currentWalkSpeed = 0; // instantaneous speed in px/s
 let walkStopping = false; // true when decelerating into a stop
 let lastWalkFrameIdx = -1;
-let runUntil = 0; // timestamp until which Damu runs
-let runToken = 0; // actionToken of the run in progress (0 = none)
 
 // Currently playing frame animation: { a, start, reverse, loop, speed, onDone, lastIdx }
 let anim = null;
 let actionToken = 1; // bumped to cancel timers belonging to an interrupted fun move
-let figureInset = 0; // px between the top of the sprite box and the top of the figure (speech bubble anchor)
 
 // Offscreen excursion state
 let isExiting = false; // true when walking out past screen border
@@ -125,17 +135,12 @@ let bubbleTimer = null;
 let dialogueTimer = null;
 
 // Animation simulation state
-let walkDistance = 0;
 let angryUntil = 0;
 let jump = null; // { start, duration, height }
 let landBounce = null; // { start }
 let posePop = null; // { start }
 let lastFrameTime = performance.now();
 
-// Mouse tracking
-let lastMouseX = -9999;
-let lastMouseY = -9999;
-let lastUserInteraction = performance.now();
 let lastHoverSound = 0;
 
 // ----- Asset Loading -----
@@ -147,47 +152,21 @@ async function loadBitmap(url) {
   return bitmapCache.get(url);
 }
 
-// Row of the first visible pixel in a frame, used to anchor the speech bubble above the head.
-const scanCanvas = document.createElement("canvas");
-const scanCtx = scanCanvas.getContext("2d", { willReadFrequently: true });
-function topOpaqueRow(bitmap) {
-  scanCanvas.width = bitmap.width;
-  scanCanvas.height = bitmap.height;
-  scanCtx.clearRect(0, 0, bitmap.width, bitmap.height);
-  scanCtx.drawImage(bitmap, 0, 0);
-  const data = scanCtx.getImageData(0, 0, bitmap.width, bitmap.height).data;
-  for (let y = 0; y < bitmap.height; y++) {
-    for (let px = 0; px < bitmap.width; px++) {
-      if (data[(y * bitmap.width + px) * 4 + 3] > 24) return y;
-    }
-  }
-  return 0;
-}
-
 async function load() {
-  // 1. Static poses
+  // 1. Static poses (in parallel; two poses may share one picture)
   const manifest = await (await fetch(`${ASSETS}/poses/manifest.json`)).json();
-  for (const [name, info] of Object.entries(manifest.poses)) {
-    poses[name] = {
-      bitmap: await loadBitmap(`${ASSETS}/${info.webp}`),
-      width: info.width,
-      height: info.height,
-      aspect: info.aspect,
-    };
-  }
+  await Promise.all(Object.entries(manifest.poses).map(async ([name, info]) => {
+    poses[name] = { bitmap: await loadBitmap(`${ASSETS}/${info.webp}`), width: info.width, height: info.height, aspect: info.aspect };
+  }));
 
   // 2. Frame animations (walk, idle)
   try {
     const animManifest = await (await fetch(`${ASSETS}/anim/manifest.json`)).json();
     for (const [name, cfgAnim] of Object.entries(animManifest.animations || {})) {
       const frames = await Promise.all(cfgAnim.frames.map((fp) => loadBitmap(`${ASSETS}/anim/${fp}`)));
-      const tops = new Map();
       anims[name] = {
         frames, width: cfgAnim.width, height: cfgAnim.height, fps: cfgAnim.fps || 12, loop: !!cfgAnim.loop,
-        top: (i) => {
-          if (!tops.has(i)) tops.set(i, topOpaqueRow(frames[i]));
-          return tops.get(i);
-        },
+        stride: cfgAnim.stride, grounded: cfgAnim.grounded, blend: !!cfgAnim.blend,
       };
     }
     if (anims.walk) {
@@ -221,7 +200,6 @@ function setPose(name, { pop = true } = {}) {
     posePop = { start: performance.now() };
   }
   currentPose = name;
-  nextPose = name;
   renderCurrentPose();
 }
 
@@ -240,15 +218,20 @@ function renderCurrentPose() {
     canvas.width = p.width;
     canvas.height = p.height;
   }
-  sizeAvatar(Math.round(DISPLAY_HEIGHT * p.aspect), DISPLAY_HEIGHT);
-  figureInset = 0;
+  // Every pose is shown at the neutral pose's body scale, so a taller picture (arms up) is taller on screen
+  const h = Math.round((DISPLAY_HEIGHT * p.height) / (poses.neutral?.height || p.height));
+  sizeAvatar(Math.round(h * p.aspect), h);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(p.bitmap, 0, 0);
+  hitFrame = p.bitmap;
+  drawHit(p.bitmap);
 }
 
-// All frame animations share one scale (the walk cycle's), so Damu never changes size between them.
-function renderAnimFrame(a, idx) {
+// All frame animations share one scale (the walk cycle's), so the character never changes size between them.
+// With next/f the frame is cross-faded into the next one, which makes a short walk cycle look smooth.
+let hitFrame = null; // the picture the hit mask currently shows
+function renderAnimFrame(a, idx, next = -1, f = 0) {
   const bmp = a.frames[idx];
   if (!bmp) return;
   if (canvas.width !== a.width || canvas.height !== a.height) {
@@ -257,10 +240,21 @@ function renderAnimFrame(a, idx) {
   }
   const s = DISPLAY_HEIGHT / walkInfo.height;
   sizeAvatar(Math.round(a.width * s), Math.round(a.height * s));
-  figureInset = a.top(idx) * s;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (hitFrame !== bmp) {
+    hitFrame = bmp;
+    drawHit(bmp);
+  }
+  if (next < 0 || f < 0.04) {
+    ctx.drawImage(bmp, 0, 0);
+    return;
+  }
+  ctx.globalAlpha = 1 - f;
   ctx.drawImage(bmp, 0, 0);
+  ctx.globalAlpha = f;
+  ctx.drawImage(a.frames[next], 0, 0);
+  ctx.globalAlpha = 1;
 }
 
 function renderWalkFrame(frameIdx) {
@@ -306,17 +300,12 @@ function updateAnim(now) {
   }
 }
 
-// Run fn once any one-shot animation has finished.
+// Run fn once any one-shot animation is over. The frame loop flushes the queue, so a job is never lost when the
+// animation is interrupted (a click, a pose change) instead of finishing.
+const settledJobs = [];
 function whenSettled(fn) {
-  if (anim && !anim.loop) {
-    const prev = anim.onDone;
-    anim.onDone = () => {
-      prev?.();
-      whenSettled(fn);
-    };
-    return;
-  }
-  fn();
+  if (anim && !anim.loop) settledJobs.push(fn);
+  else fn();
 }
 
 // ----- Activities & AI Decisions -----
@@ -482,7 +471,7 @@ function place() {
     const bw = bubble.offsetWidth;
     const bx = Math.min(Math.max(8, x - bw / 2), window.innerWidth - bw - 8);
     bubble.style.left = bx + "px";
-    bubble.style.bottom = (avatar.offsetHeight - figureInset + 24) + "px";
+    bubble.style.bottom = (avatar.offsetHeight + 24) + "px";
     bubble.style.setProperty("--tail", (x - bx) + "px");
   }
 }
@@ -519,18 +508,21 @@ function say(text, { face = "neutral", buttons, ms = 5000 } = {}) {
 function hideBubble() {
   clearTimeout(bubbleTimer);
   bubble.style.display = "none";
-  if (overUi) {
+  if (overUi && !dragging) {
     overUi = false;
     window.damu.setIgnoreMouse(true);
   }
 }
 
 // ----- Audio -----
-// Decoded once at startup, played one clip at a time (a new clip cuts off the previous one).
+// A clip is fetched and decoded the first time it is needed (not all at start-up), one clip at a time:
+// a new clip cuts off the previous one.
 const audioCtx = new AudioContext();
 const clips = {}; // name -> AudioBuffer
+const loading = {}; // name -> Promise<boolean>
 let nowPlaying = null;
 let lastClip = "";
+let wanted = ""; // the newest request, so a slow decode never plays over a later sound
 
 function audioNames() {
   const names = new Set(content.ok.audio);
@@ -540,39 +532,39 @@ function audioNames() {
   return [...names].filter(Boolean);
 }
 
-async function loadClip(name) {
-  const candidates = /\.\w+$/.test(name) ? [name] : [`${name}.wav`, `${name}.mp3`];
-  for (const file of candidates) {
-    try {
-      const res = await fetch(`${ASSETS}/audio/${file}`);
-      if (!res.ok) continue;
-      clips[name] = await audioCtx.decodeAudioData(await res.arrayBuffer());
-      return;
-    } catch (err) {
-      console.error(`Failed to load audio "${file}":`, err);
+function loadClip(name) {
+  return (loading[name] ||= (async () => {
+    const candidates = /\.\w+$/.test(name) ? [name] : [`${name}.mp3`, `${name}.wav`];
+    for (const file of candidates) {
+      try {
+        const res = await fetch(`${ASSETS}/audio/${file}`);
+        if (!res.ok) continue;
+        clips[name] = await audioCtx.decodeAudioData(await res.arrayBuffer());
+        return true;
+      } catch (err) {
+        console.error(`Failed to load audio "${file}":`, err);
+      }
     }
-  }
-  console.error(`Audio "${name}" not found in assets/audio/`);
-}
-
-async function loadAudio() {
-  await Promise.all(audioNames().map(loadClip));
-  console.log(`[companion] Loaded ${Object.keys(clips).length} audio clips`);
+    console.error(`Audio "${name}" not found`);
+    return false;
+  })()).then((ok) => {
+    if (!ok) delete loading[name]; // allow a retry later
+    return ok;
+  });
 }
 
 const masterGain = audioCtx.createGain();
 masterGain.connect(audioCtx.destination);
 
 function stopAudio() {
+  wanted = "";
   try { nowPlaying?.stop(); } catch {}
   nowPlaying = null;
 }
 
-// Plays one clip by name. group is the Settings switch that must be on (cfg key).
-function playClip(name, group) {
-  if (!name || !clips[name] || !cfg.audioEnabled || !cfg[group]) return false;
+function start(name) {
   lastClip = name;
-  stopAudio();
+  try { nowPlaying?.stop(); } catch {}
   if (audioCtx.state === "suspended") audioCtx.resume();
   const src = audioCtx.createBufferSource();
   src.buffer = clips[name];
@@ -580,6 +572,14 @@ function playClip(name, group) {
   src.onended = () => { if (nowPlaying === src) nowPlaying = null; };
   src.start();
   nowPlaying = src;
+}
+
+// Plays one clip by name. group is the Settings switch that must be on (cfg key).
+function playClip(name, group) {
+  if (!name || !cfg.audioEnabled || !cfg[group]) return false;
+  wanted = name;
+  if (clips[name]) start(name);
+  else loadClip(name).then((ok) => { if (ok && wanted === name && cfg.audioEnabled) start(name); });
   return true;
 }
 
@@ -633,19 +633,26 @@ function funAction(name) {
   const action = FUN_ACTIONS.includes(name) ? name : pick(FUN_ACTIONS);
   const token = ++actionToken;
   nextAt = Infinity;
+  const alive = () => token === actionToken && !busy && !dragging;
 
-  if (action === "run") {
-    // Dash across the screen, then settle
-    startWalk();
-    runUntil = performance.now() + 2600;
-    runToken = token; // still current when he stops => carry on with afterFun
-    nextAt = runUntil;
+  if (action === "spin") {
+    // Turn around on the spot a few times
+    setPose("neutral");
+    let turns = 4;
+    const turn = () => {
+      if (!alive()) return;
+      if (turns-- <= 0) return afterFun();
+      targetDir = -targetDir;
+      dir = targetDir;
+      setTimeout(turn, 420);
+    };
+    turn();
   } else {
-    // Cheer: a few quick hops
-    setPose("nail-look");
+    // Cheer: a few quick hops (in the cheering pose if the character has one)
+    setPose(poses.cheer ? "cheer" : "nail-look");
     let hops = 3;
     const hop = () => {
-      if (token !== actionToken || busy || dragging) return;
+      if (!alive()) return;
       if (hops-- <= 0) return afterFun();
       doHop(30, 0.34);
       setTimeout(hop, 380);
@@ -679,8 +686,9 @@ function visit(manual = false) {
 function greet() {
   const g = content.greeting;
   if (!g) return;
-  setPose("looking");
-  say(g.text, { face: "looking", ms: 5000 });
+  const pose = poses[g.pose] ? g.pose : "looking"; // content.json may pick the intro picture
+  setPose(pose);
+  say(g.text, { face: faceFor(pose), ms: 5000 });
   playClip(g.audio, "soundDialogues");
 }
 
@@ -693,7 +701,6 @@ function playEntry(list, key) {
 
 function react(kind) {
   if (busy || mode === "offscreen" || isTravelling()) return;
-  lastUserInteraction = performance.now();
   actionToken++;
   if (mode === "walk" || walkStopping || mode === "hover_nail") {
     mode = "stand";
@@ -703,10 +710,11 @@ function react(kind) {
 
   if (kind === "click") {
     // Startled reaction
-    setPose("apologies");
+    const pose = poses.confused ? "confused" : "apologies";
+    setPose(pose);
     doHop(26, 0.36);
     const entry = playEntry(content.mouse.click, "click");
-    say(entry?.text, { face: "apologies", ms: 3500 });
+    say(entry?.text, { face: pose, ms: 3500 });
     nextAt = performance.now() + 3000;
   } else if (kind === "dblclick") {
     // Angry clenched fists with tremor
@@ -730,12 +738,16 @@ window.damu.onSay(() => {
 
 // ----- Settings -----
 function applySettings(s) {
+  if (s.character && s.character !== cfg.character) {
+    location.reload(); // a different character: start over with his own assets
+    return;
+  }
   const prevSize = cfg.size;
   cfg = { ...cfg, ...s };
   WALK_SPEED = BASE_WALK_SPEED * cfg.walkSpeed;
   WALK_ACCEL = BASE_WALK_ACCEL * cfg.walkSpeed;
   WALK_DECEL = BASE_WALK_DECEL * cfg.walkSpeed;
-  STRIDE_DISTANCE = BASE_STRIDE_DISTANCE * cfg.size;
+  STRIDE_DISTANCE = (anims.walk?.stride || BASE_STRIDE_DISTANCE) * cfg.size;
   DISPLAY_HEIGHT = BASE_DISPLAY_HEIGHT * cfg.size;
   masterGain.gain.value = cfg.volume;
   if (!cfg.audioEnabled) stopAudio();
@@ -743,8 +755,15 @@ function applySettings(s) {
 }
 window.damu.onSettings(applySettings);
 window.damu.onPreviewSound(() => {
-  const names = Object.keys(clips);
+  const names = audioNames();
   if (names.length) playClip(pickNoRepeat(names, "preview"), "audioEnabled");
+});
+
+// Keep him on screen if the display size changes
+addEventListener("resize", () => {
+  if (mode === "offscreen" || isTravelling()) return;
+  const half = W() / 2;
+  x = Math.min(Math.max(half, x), window.innerWidth - half);
 });
 
 // Companion switched off: walk out, then let the main process hide the window.
@@ -770,6 +789,7 @@ window.damu.onLeave(() => {
     return;
   }
   whenSettled(() => {
+    if (cfg.visible) return; // switched back on in the meantime
     leaving = true;
     startOffscreenWalk();
   });
@@ -793,19 +813,16 @@ function isOpaque(e) {
   const r = canvas.getBoundingClientRect();
   if (e.clientX < r.left || e.clientX >= r.right || e.clientY < r.top || e.clientY >= r.bottom) return false;
 
-  let px = ((e.clientX - r.left) / r.width) * canvas.width;
-  if (facingScale < 0) px = canvas.width - px;
-  const py = ((e.clientY - r.top) / r.height) * canvas.height;
+  let px = ((e.clientX - r.left) / r.width) * hitCanvas.width;
+  if (facingScale < 0) px = hitCanvas.width - px;
+  const py = ((e.clientY - r.top) / r.height) * hitCanvas.height;
 
-  const pixel = ctx.getImageData(Math.max(0, Math.min(canvas.width - 1, px | 0)), py | 0, 1, 1).data;
+  const pixel = hitCtx.getImageData(Math.max(0, Math.min(hitCanvas.width - 1, px | 0)), Math.max(0, Math.min(hitCanvas.height - 1, py | 0)), 1, 1).data;
   return pixel[3] > 24;
 }
 
 // Track mouse position and hover hit-testing
 window.addEventListener("mousemove", (e) => {
-  lastMouseX = e.clientX;
-  lastMouseY = e.clientY;
-
   if (dragging || mode === "offscreen") return;
   const hit = isOpaque(e);
   if (hit !== overUi) {
@@ -819,7 +836,7 @@ window.addEventListener("mousemove", (e) => {
         lastHoverSound = now;
         playEntry(content.mouse.hover, "hover");
       }
-      if (!busy && !angryUntil && (mode === "stand" || mode === "looking" || mode === "looking_up")) {
+      if (!busy && angryUntil <= performance.now() && (mode === "stand" || mode === "looking" || mode === "looking_up")) {
         mode = "hover_nail";
         setPose("nail-look");
       }
@@ -902,9 +919,21 @@ avatar.addEventListener("mousedown", (e) => {
 });
 
 // ----- Real-Time Animation & Physics Frame Loop -----
+let lastTransform = "";
+
 function frame(now) {
-  const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
+  // A character standing still needs ~30 fps and a parked (off-screen) one ~4 fps: this keeps the overlay light.
+  const calm = !anim && !jump && !landBounce && !posePop && !dragging && angryUntil <= now &&
+    mode !== "walk" && mode !== "return_walk" && !walkStopping;
+  const minGap = mode === "offscreen" ? 250 : calm ? 30 : 0;
+  if (now - lastFrameTime < minGap) {
+    requestAnimationFrame(frame);
+    return;
+  }
+  // Movement is time-based, so speed is the same at any frame rate; the clamp only stops a jump after the PC sleeps.
+  const dt = Math.min(0.1, Math.max(0, (now - lastFrameTime) / 1000));
   lastFrameTime = now;
+  if (settledJobs.length && !(anim && !anim.loop)) settledJobs.splice(0).forEach((job) => job());
 
   let tfX = 0;
   let tfY = 0;
@@ -925,23 +954,26 @@ function frame(now) {
 
   if (anim) updateAnim(now);
 
+  // Smooth turnaround pivot (walking turns, and the "spin" fun move)
+  if (facingScale !== targetDir) {
+    const step = 6.8 * dt; // a full turn takes ~0.3s
+    facingScale = Math.abs(targetDir - facingScale) <= step ? targetDir : facingScale + Math.sign(targetDir - facingScale) * step;
+  }
+
   // 1. Locomotion / Realistic Walking (Inside screen, Exiting screen, or Returning)
   if (mode === "walk" || walkStopping || mode === "return_walk") {
-    const topSpeed = WALK_SPEED * (now < runUntil ? RUN_BOOST : 1);
+    const n = walkBitmaps.length || 1;
     // Smooth acceleration or deceleration
     if (walkStopping) {
       currentWalkSpeed = Math.max(0, currentWalkSpeed - WALK_DECEL * dt);
-      const curFrame = Math.floor(walkCycleProgress * walkBitmaps.length) % walkBitmaps.length;
-      // Complete stride onto grounded stance (frames 0, 1, 8, 9 or stopped)
-      if (currentWalkSpeed < 14 && (curFrame === 0 || curFrame === 1 || curFrame === 8 || curFrame === 9 || currentWalkSpeed <= 1)) {
+      const curFrame = Math.floor(walkCycleProgress * n) % n;
+      // Finish the stride on a grounded frame (feet planted) before standing
+      if (currentWalkSpeed < 14 && ((anims.walk?.grounded || [0, 1, 8, 9]).includes(curFrame) || currentWalkSpeed <= 1)) {
         if (mode === "return_walk") onDamuReturned();
-        else if (runToken === actionToken) {
-          runToken = 0;
-          afterFun();
-        } else standIdle();
+        else standIdle();
       }
     } else {
-      currentWalkSpeed = Math.min(topSpeed, currentWalkSpeed + WALK_ACCEL * dt);
+      currentWalkSpeed = Math.min(WALK_SPEED, currentWalkSpeed + WALK_ACCEL * dt);
     }
 
     const half = W() / 2;
@@ -982,22 +1014,9 @@ function frame(now) {
       }
     }
 
-    // Smooth turnaround pivot interpolation
-    if (facingScale !== targetDir) {
-      const turnSpeed = 6.8; // pivots smoothly in ~0.25s
-      const step = turnSpeed * dt;
-      if (Math.abs(targetDir - facingScale) <= step) {
-        facingScale = targetDir;
-      } else {
-        facingScale += Math.sign(targetDir - facingScale) * step;
-      }
-    }
-
     // Pivot factor: turning on the spot slows down lateral progress
     const turnFactor = 0.25 + 0.75 * Math.abs(facingScale);
-    const stepMove = targetDir * (currentWalkSpeed * turnFactor) * dt;
-    x += stepMove;
-    walkDistance += Math.abs(stepMove);
+    x += targetDir * (currentWalkSpeed * turnFactor) * dt;
 
     // Keep avatar strictly inside screen viewport only if not exiting or returning
     if (!isExiting && mode !== "return_walk" && mode !== "offscreen") {
@@ -1007,8 +1026,14 @@ function frame(now) {
     // Render synchronized walk frame (zero foot sliding)
     if (walkBitmaps.length > 0 && currentWalkSpeed > 0.05) {
       walkCycleProgress = (walkCycleProgress + ((currentWalkSpeed * turnFactor) / STRIDE_DISTANCE) * dt) % 1.0;
-      const frameIdx = Math.floor(walkCycleProgress * walkBitmaps.length) % walkBitmaps.length;
-      if (frameIdx !== lastWalkFrameIdx) {
+      const pos = walkCycleProgress * n;
+      const frameIdx = Math.floor(pos) % n;
+      if (anims.walk.blend) {
+        // hold each pose a moment, then ease into the next: less time spent half-blended
+        const t = Math.min(1, Math.max(0, (pos - Math.floor(pos) - 0.15) / 0.7));
+        renderAnimFrame(anims.walk, frameIdx, (frameIdx + 1) % n, t * t * (3 - 2 * t));
+        lastWalkFrameIdx = frameIdx;
+      } else if (frameIdx !== lastWalkFrameIdx) {
         lastWalkFrameIdx = frameIdx;
         renderWalkFrame(frameIdx);
       }
@@ -1045,8 +1070,6 @@ function frame(now) {
     tfX += (Math.random() - 0.5) * amp * 2;
     tfY += (Math.random() - 0.5) * amp;
     tfRot += (Math.random() - 0.5) * amp * 1.5;
-  } else if (mode === "angry" && angryUntil <= now) {
-    standIdle();
   }
 
   // 5. Startle Hop / Jump Physics
@@ -1092,32 +1115,42 @@ function frame(now) {
 
   decide(now);
 
-  // Apply composite hardware-accelerated transform with smooth facing scale
+  // Apply composite hardware-accelerated transform with smooth facing scale (only when it changed)
   const visualScaleX = Math.sign(facingScale || targetDir || 1) * Math.max(0.12, Math.abs(facingScale));
-  avatar.style.transform = `scaleX(${visualScaleX.toFixed(3)}) translate(${tfX.toFixed(2)}px, ${tfY.toFixed(2)}px) rotate(${tfRot.toFixed(2)}deg) scale(${tfScaleX.toFixed(3)}, ${tfScaleY.toFixed(3)})`;
+  const transform = `scaleX(${visualScaleX.toFixed(3)}) translate(${tfX.toFixed(2)}px, ${tfY.toFixed(2)}px) rotate(${tfRot.toFixed(2)}deg) scale(${tfScaleX.toFixed(3)}, ${tfScaleY.toFixed(3)})`;
+  if (transform !== lastTransform) {
+    avatar.style.transform = transform;
+    lastTransform = transform;
+  }
 
   place();
   requestAnimationFrame(frame);
 }
 
 // ----- Bootstrap -----
-Promise.all([load(), loadContent().then(loadAudio), window.damu.getSettings()]).then(([, , s]) => {
-  console.log("[companion] Assets loaded. Starting animation loop...");
-  applySettings(s);
-  if (!cfg.visible) {
-    // Switched off: stay parked off-screen until the companion is enabled.
-    setPose("neutral", { pop: false });
-    mode = "offscreen";
-    returnAt = Infinity;
-    x = -500;
-    avatar.style.visibility = "hidden";
-  } else {
-    // Walk in from the right edge instead of popping into existence.
-    pending = { run: greet };
-    startReturnWalk(performance.now(), false);
-    returnTargetX = Math.max(200, window.innerWidth - 320);
+(async () => {
+  try {
+    const s = await window.damu.getSettings();
+    cfg.character = s.character; // the character decides which folder every asset comes from
+    ASSETS = `../assets/characters/${s.character}`;
+    await Promise.all([load(), loadContent()]);
+    console.log(`[companion] ${s.character} loaded. Starting animation loop...`);
+    applySettings(s);
+    if (!cfg.visible) {
+      // Switched off: stay parked off-screen until the companion is enabled.
+      setPose("neutral", { pop: false });
+      mode = "offscreen";
+      returnAt = Infinity;
+      x = -500;
+      avatar.style.visibility = "hidden";
+    } else {
+      // Walk in from the right edge instead of popping into existence.
+      pending = { run: greet };
+      startReturnWalk(performance.now(), false);
+      returnTargetX = Math.max(200, window.innerWidth - 320);
+    }
+    requestAnimationFrame(frame);
+  } catch (err) {
+    console.error("Failed to load character assets:", err);
   }
-  requestAnimationFrame(frame);
-}).catch((err) => {
-  console.error("Failed to load Damu assets:", err);
-});
+})();
