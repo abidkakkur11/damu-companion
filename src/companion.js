@@ -648,8 +648,8 @@ function funAction(name) {
     };
     turn();
   } else {
-    // Cheer: a few quick hops (in the cheering pose if the character has one)
-    setPose(poses.cheer ? "cheer" : "nail-look");
+    // Cheer: a few quick hops. The cheering picture is kept for the greeting only.
+    setPose(poses.cheer ? "neutral" : "nail-look");
     let hops = 3;
     const hop = () => {
       if (!alive()) return;
@@ -710,7 +710,7 @@ function react(kind) {
 
   if (kind === "click") {
     // Startled reaction
-    const pose = poses.confused ? "confused" : "apologies";
+    const pose = poses.looking ? "looking" : "apologies";
     setPose(pose);
     doHop(26, 0.36);
     const entry = playEntry(content.mouse.click, "click");
@@ -1041,6 +1041,8 @@ function frame(now) {
 
     // Subtle forward tilt into direction of movement (organic momentum)
     tfRot += targetDir * (currentWalkSpeed / WALK_SPEED) * 1.6;
+    // Gentle step bounce for cross-faded walks (two bounces per cycle), so the walk has weight
+    if (anims.walk?.blend) tfY -= Math.abs(Math.sin(walkCycleProgress * Math.PI * 2)) * 3 * (currentWalkSpeed / WALK_SPEED);
   } else {
     // 2. Breathing / Micro-Idling (organic life simulation)
     if (mode === "stand" || mode === "nail_look" || mode === "hover_nail" || mode === "looking" || mode === "looking_up") {

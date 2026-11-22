@@ -19,14 +19,15 @@
     }
   },
   "walk": {
-    "video": "ramanan-walking.mp4",
-    "from": 3.608,
-    "cycle": 1,
-    "frames": 12,
+    "sheet": "walking-sheet",
+    "frames": 8,
     "height": 440,
-    "fps": 12,
-    "stride": 190,
+    "fps": 10,
+    "stride": 120,
     "blend": true,
-    "grounded": [0, 6]
+    "grounded": [
+      0,
+      7
+    ]
   }
 }

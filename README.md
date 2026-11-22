@@ -83,7 +83,7 @@ cycle, speech-bubble faces, voice clips and `content.json`.
 
 | Character | Poses | Walk cycle | Voice |
 | --- | --- | --- | --- |
-| Ramanan | 10 | 12 frames, from a real walk | intro clip included, add more in his content.json |
+| Ramanan | 10 | 8 frames, cross-faded | included |
 | Damu | 7 | 16 frames | included |
 
 **Adding a character:** put his artwork in a folder, describe it in `scripts/characters/<id>.json` (see `ramanan.json`),
@@ -121,10 +121,10 @@ character's `audio/` folder (`.wav` or `.mp3`, name without the extension; `npm 
 
 | Field | Meaning |
 | --- | --- |
-| `greeting` | Shown when Damu appears (launch, switched on, **Say hi**) |
+| `greeting` | Shown when Damu appears (launch, switched on, **Say hi**). Optional `pose` chooses its picture (Ramanan uses `cheer`) |
 | `goodbye` | Played when Damu is switched off and walks away (audio keeps playing after he is gone) |
 | `dialogues` | Damu picks one at random (never the same twice in a row), shows the text and plays the audio |
-| `pose` (optional) | `neutral`, `nail-look`, `looking`, `looking-up`, `warning` or `apologies`; random if omitted |
+| `pose` (optional) | Any pose the character has, e.g. `neutral`, `nail-look`, `looking`, `looking-up`, `warning`, `apologies`, `laughing`; random if omitted |
 | `action` (optional) | What he does after OK: `cheer` or `spin`; random if omitted |
 | `ok.audio` | Clips played when the user presses OK (one at random) |
 | `mouse.*` | Text is optional. With no text, only the sound plays. Empty list = silent |
