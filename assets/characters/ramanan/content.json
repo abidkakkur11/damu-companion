@@ -1,24 +1,37 @@
 {
   "_help": [
-    "Everything Ramanan says and plays. Audio names refer to files in assets/characters/ramanan/audio/ (.wav or .mp3);",
-    "leave out \"audio\" for a text-only line. The text below is a starting point: replace it with your own.",
-    "dialogues: he comes to you, shows the text (and plays its audio) and waits for OK. Optional \"pose\" and \"action\" (cheer, spin).",
-    "ok: the button label and the clip played on OK. mouse: click, dblclick, dragStart, drop, hover. goodbye: when he is switched off."
+    "Everything Ramanan says and plays lives in this file. Audio names refer to files in assets/characters/ramanan/audio/ (.wav or .mp3).",
+    "dialogues: Ramanan comes to you, shows the text and plays its audio. Add as many as you like.",
+    "  Optional per dialogue: \"pose\" (neutral, nail-look, looking, looking-up, warning, apologies, confused, angry, laughing, cheer) and",
+    "  \"action\" after OK (cheer, spin). Leave them out to pick at random.",
+    "ok: the button label, and the audio played when the user clicks it.",
+    "mouse: text and/or audio for click, dblclick, dragStart, drop and hover. Text is optional.",
+    "goodbye: played (text + audio) when Ramanan is switched off and walks away.",
+    "NOTE: the texts below are placeholders made from the clip names. Replace each with what the clip really says."
   ],
   "greeting": { "text": "Namaskaaram! Njan Ramanan.", "audio": "intro", "pose": "cheer" },
-  "goodbye": { "text": "Pinne kaanaam!" },
+  "goodbye": { "text": "Work time.. pinne kaanaam!", "audio": "work-time" },
   "dialogues": [
-    { "text": "Enthokke und vishesham?" },
-    { "text": "Vellam kudichille?", "pose": "warning" },
-    { "text": "Oru chaya kudichittu pani thudaram, alle?" },
-    { "text": "Njan ivide thanne und, vilichal mathi.", "pose": "looking" }
+    { "text": "Alakkal..", "audio": "alakkal" },
+    { "text": "Bhootham..", "audio": "bhootham" },
+    { "text": "Chapathi nahi..", "audio": "chapathi-nahi" },
+    { "text": "Khana nahi..", "audio": "khana-nahi" },
+    { "text": "Chor.. chor..", "audio": "chor-hindi" },
+    { "text": "Shoe polish..", "audio": "shoe-polish" },
+    { "text": "Two year..", "audio": "two-year" },
+    { "text": "Vishapp..", "audio": "vishapp" }
   ],
-  "ok": { "label": "OK" },
+  "ok": { "label": "OK", "audio": ["muthalalee"] },
   "mouse": {
-    "click": [{ "text": "Ayyo!" }, { "text": "Entha?" }],
-    "dblclick": [{ "text": "Pinne enthaanu?" }, { "text": "Ithu kollaallo!" }],
-    "dragStart": [],
-    "drop": [],
+    "click": [
+      { "text": "Chetta..", "audio": "chetta" },
+      { "text": "Soniya..", "audio": "soniya" }
+    ],
+    "dblclick": [
+      { "text": "Podo..", "audio": "podo-he" }
+    ],
+    "dragStart": [{ "audio": "alakkal" }],
+    "drop": [{ "audio": "chetta" }],
     "hover": []
   }
 }
