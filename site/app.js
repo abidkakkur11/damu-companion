@@ -58,10 +58,10 @@
   $("damu").addEventListener("click", () => { say(idx + 1); auto(); });
   auto();
 
-  // ----- Amban preview says things -----
+  // ----- Ramanan says things -----
   const ambanLines = [
     "Janga Jaga Jagaa!",
-    "മൊതലാളീ..! അടുത്ത റിലീസിൽ ഞാൻ വരുന്നുണ്ട്!",
+    "മൊതലാളീ..! ഇപ്പോൾ ഞാനും ഇവിടെയുണ്ട്!",
     "Janga Jaga Jagaa!"
   ];
   let ambanIdx = 0;
