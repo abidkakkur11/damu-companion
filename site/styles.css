@@ -266,6 +266,10 @@ h3 { margin: 0 0 8px; font-size: 1.2rem; letter-spacing: -.01em; }
 .shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
 .shot { margin: 0; }
 .shot img { border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow); width: 100%; }
+.chars3 { grid-template-columns: repeat(3, 1fr); align-items: start; }
+.chars3 .shot img { background: #fffdf6; }
+.notes { margin: 0 0 24px; padding-left: 1.2em; display: grid; gap: 12px; }
+.notes li { line-height: 1.55; }
 .shot figcaption { margin-top: 12px; text-align: center; color: var(--muted); font-size: .92rem; }
 
 .dl-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
@@ -364,7 +368,7 @@ body[data-intro="pending"] .sound { animation: nudge 1.6s ease-in-out infinite; 
 }
 @media (max-width: 640px) {
   body { font-size: 16px; }
-  .bento, .steps, .shots, .dl-grid { grid-template-columns: 1fr; }
+  .bento, .steps, .shots, .chars3, .dl-grid { grid-template-columns: 1fr; }
   .c-wide, .c-full { grid-column: auto; }
   .stage { min-height: 430px; }
   .say { min-height: 160px; margin-bottom: 18px; }
