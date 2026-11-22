@@ -140,55 +140,8 @@ async function buildPoses() {
   console.log(`poses: ${Object.keys(poses).join(", ")}`);
 }
 
-// Walk cycle from a video of the real walk. Recipe: walk.video (file in the source folder), "from" (seconds where one full
-// cycle starts), "cycle" (seconds one full cycle lasts), "frames" (how many frames to keep). Frames are aligned on the
-// shirt (x) and keep their true height, so the feet rise and fall like in the video.
-async function buildWalkFromVideo(w) {
-  const tmp = fs.mkdtempSync(path.join(require("node:os").tmpdir(), "walk-"));
-  const { spawnSync } = require("node:child_process");
-  const run = spawnSync(require("ffmpeg-static"), ["-v", "error", "-ss", String(w.from), "-t", String(w.cycle), "-i", path.join(srcDir, w.video), "-vf", `fps=${w.frames / w.cycle}`, path.join(tmp, "f%03d.png")]);
-  if (run.status !== 0) throw new Error(`ffmpeg failed: ${run.stderr}`);
-  const files = fs.readdirSync(tmp).sort().slice(0, w.frames);
-  if (files.length !== w.frames) throw new Error(`expected ${w.frames} walk frames, got ${files.length}`);
-  const mats = [];
-  for (const f of files) {
-    const m = await matte(path.join(tmp, f), { light: 222, sat: 22 });
-    let sx = 0, sc = 0;
-    for (let i = 0; i < m.W * m.H; i++) if (m.data[i * 4 + 3] > 200 && isShirt(m.data[i * 4], m.data[i * 4 + 1], m.data[i * 4 + 2])) { sx += i % m.W; sc++; }
-    mats.push({ m, b: bbox(m), cx: sx / sc });
-  }
-  const left = Math.max(...mats.map((f) => f.cx - f.b.x0)), right = Math.max(...mats.map((f) => f.b.x1 - f.cx));
-  const top = Math.min(...mats.map((f) => f.b.y0)), bottom = Math.max(...mats.map((f) => f.b.y1));
-  const cw = Math.ceil(left + right + 1), ch = bottom - top + 1;
-  fs.rmSync(path.join(out, "anim", "walk"), { recursive: true, force: true });
-  fs.mkdirSync(path.join(out, "anim", "walk"), { recursive: true });
-  const names = [];
-  let outW = 0, outH = 0;
-  for (const [i, f] of mats.entries()) {
-    const full = await toSharp(f.m).png({ compressionLevel: 1 }).toBuffer();
-    const x = Math.round(f.cx - left); // source column that lands on the left edge of the common canvas
-    const M = 800; // transparent margin so the crop window may reach outside the video frame
-    const padded = await sharp(full).extend({ top: M, bottom: M, left: M, right: M, background: { r: 0, g: 0, b: 0, alpha: 0 } }).png({ compressionLevel: 1 }).toBuffer();
-    const crop = await sharp(padded).extract({ left: x + M, top: top + M, width: cw, height: ch }).png().toBuffer();
-    const img = await sharp(crop).resize({ height: w.height, kernel: "lanczos3" }).toBuffer();
-    const meta = await sharp(img).metadata();
-    outW = meta.width; outH = meta.height;
-    const name = `walk/${String(i).padStart(4, "0")}.webp`;
-    await webp(sharp(img), path.join(out, "anim", name), cfg.quality || 88);
-    names.push(name);
-  }
-  fs.rmSync(tmp, { recursive: true, force: true });
-  const { frames: _f, video: _v, from: _s, cycle: _c, height: _h, ...rest } = w;
-  const manifestFile = path.join(out, "anim", "manifest.json");
-  const prev = fs.existsSync(manifestFile) ? JSON.parse(fs.readFileSync(manifestFile, "utf8")) : {};
-  prev.animations = { ...prev.animations, walk: { frames: names, loop: true, width: outW, height: outH, ...rest } };
-  fs.writeFileSync(manifestFile, JSON.stringify(prev, null, 2) + "\n");
-  console.log(`walk (video): ${names.length} frames at ${outW}x${outH}`);
-}
-
 async function buildWalk() {
   const w = cfg.walk;
-  if (w.video) return buildWalkFromVideo(w);
   const sheet = await matte(path.join(srcDir, `${w.sheet}.png`), { light: 222, sat: 22 });
   const { data, W, H } = sheet;
   // label connected pieces (8-neighbour); the sheet has w.frames separate figures

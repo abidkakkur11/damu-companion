@@ -4,17 +4,18 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
-## [3.0.0] - Unreleased
+## [3.0.0] - 2026-11-22
 
 A second character, a character switch, and a lighter, steadier app.
 
 ### Added
-- **Ramanan**, a new character with ten poses (including angry, confused, laughing and a towel-waving cheer that introduces him, with his intro voice clip) and a natural walk cycle built from a video of a real walk.
-  He is the default; his dialogues are text-only until you add voice clips.
+- **Ramanan**, a new character with ten poses and a smooth, cross-faded walk cycle with a gentle step bounce. He is the default.
+  He introduces himself in the towel-waving cheer pose with his intro voice clip, a single click shows the `looking` pose, a double-click the `angry` one, and `confused` and `laughing` are available for dialogues. His voice clips and Malayalam dialogues are included.
+- A greeting can choose its picture: `"greeting": { "text": "...", "audio": "intro", "pose": "cheer" }`.
 - **Character switch** in Settings > General (a card per character) and in the tray / menu-bar menu. The change is live
   and the tray icon follows the character.
 - `npm run character`: builds a character from raw artwork (background removal, walk-frame alignment, faces).
-- A "spin" fun move after OK, and a `cheer` pose for characters that have one.
+- A "spin" fun move after OK. The `cheer` picture is kept for the greeting; after OK a character hops or spins in a normal pose.
 
 ### Changed
 - Assets moved to `assets/characters/<id>/` (poses, anim, faces, audio, `content.json`).

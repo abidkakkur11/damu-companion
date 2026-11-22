@@ -9,29 +9,29 @@
     "goodbye: played (text + audio) when Ramanan is switched off and walks away.",
     "NOTE: the texts below are placeholders made from the clip names. Replace each with what the clip really says."
   ],
-  "greeting": { "text": "Namaskaaram! Njan Ramanan.", "audio": "intro", "pose": "cheer" },
-  "goodbye": { "text": "Work time.. pinne kaanaam!", "audio": "work-time" },
+  "greeting": { "text": "മുതലാളീ.. ജങ്ക ജഗ ജഗാ.. ", "audio": "intro", "pose": "cheer" },
+  "goodbye": { "text": "മൊതലാളീ.. ", "audio": "muthalalee" },
   "dialogues": [
-    { "text": "Alakkal..", "audio": "alakkal" },
-    { "text": "Bhootham..", "audio": "bhootham" },
-    { "text": "Chapathi nahi..", "audio": "chapathi-nahi" },
-    { "text": "Khana nahi..", "audio": "khana-nahi" },
-    { "text": "Chor.. chor..", "audio": "chor-hindi" },
-    { "text": "Shoe polish..", "audio": "shoe-polish" },
-    { "text": "Two year..", "audio": "two-year" },
-    { "text": "Vishapp..", "audio": "vishapp" }
+    { "text": "എനിക്ക് ഭംഗിയായി അലക്കാൻ അറിയാം॥ ", "audio": "alakkal" },
+    { "text": "തീരുമ്പോൾ തീരുമ്പോൾ പണി തരാൻ ഞാനെന്താ കുപ്പീന്ന വന്ന ഭൂതാ?", "audio": "bhootham" },
+    { "text": "എനിക്ക് ചപ്പാത്തി നഹി നഹി..", "audio": "chapathi-nahi" },
+    { "text": "കാണ കഴുകാനൊന്നും എനിക്ക് പറ്റില്ല..", "audio": "khana-nahi" },
+    { "text": "ഞാൻ ചപ്പാത്തി കഴിക്കാറില്ല .. ചോറാണ് തിന്നണത്..", "audio": "chor-hindi" },
+    { "text": "ഇവന് ഭംഗിയായി ഷൂ പോളിഷ് ചെയ്യാൻ അറിയാം..", "audio": "shoe-polish" },
+    { "text": "ഇവിടെ അലക്കും നനയും ഒന്നും ഇല്ലേ ?", "audio": "two-year" },
+    { "text": "അവന് വിശക്കുന്നുണ്ടാവും മുതലാളീ..  ", "audio": "vishapp" }
   ],
-  "ok": { "label": "OK", "audio": ["muthalalee"] },
+  "ok": { "label": "ശരി", "audio": ["muthalalee"] },
   "mouse": {
     "click": [
-      { "text": "Chetta..", "audio": "chetta" },
-      { "text": "Soniya..", "audio": "soniya" }
+      { "text": "മുതലാളി ഒരു ചെറ്റയാണ്..", "audio": "chetta" },
+      { "text": "സോനിയ.. വന്നാട്ടെ..", "audio": "soniya" }
     ],
     "dblclick": [
-      { "text": "Podo..", "audio": "podo-he" }
+      { "text": "നഹി ന്നു പറഞ്ഞാൽ നഹി..", "audio": "podo-he" }
     ],
-    "dragStart": [{ "audio": "alakkal" }],
-    "drop": [{ "audio": "chetta" }],
+    "dragStart": [{ "audio": "muthalalee" }],
+    "drop": [{ "audio": "work-time" }],
     "hover": []
   }
 }

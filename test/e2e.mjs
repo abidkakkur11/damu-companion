@@ -66,8 +66,8 @@ try {
   await loaded("ramanan");
   const pn = await C.ev("Object.keys(poses).sort().join(',')");
   check("10 poses loaded", pn === "angry,apologies,cheer,confused,laughing,looking,looking-up,neutral,nail-look,warning".split(",").sort().join(","), pn);
-  check("walk cycle: 12 frames from the walking video", (await C.ev("anims.walk.frames.length")) === 12 && (await C.ev("anims.walk.blend")) === true);
-  check("walk uses the character's own stride and grounded frames", (await C.ev("anims.walk.stride")) === 190 && (await C.ev("JSON.stringify(anims.walk.grounded)")) === "[0,6]");
+  check("walk cycle: 8 cross-faded frames", (await C.ev("anims.walk.frames.length")) === 8 && (await C.ev("anims.walk.blend")) === true);
+  check("walk uses the character's own stride and grounded frames", (await C.ev("anims.walk.stride")) === 120 && (await C.ev("JSON.stringify(anims.walk.grounded)")) === "[0,7]");
   const greeted = await waitFor(() => C.ev("bubble.style.display === 'flex' && bubbleText.textContent === content.greeting.text"), 45000, 100);
   check("greets with the text from his content.json after walking in", !!greeted, await C.ev("content.greeting.text"));
 
@@ -116,14 +116,14 @@ try {
   check("OK closes it and he carries on", (await waitFor(() => C.ev("!busy && bubble.style.display === 'none'"), 3000)) !== false);
   for (const act of ["cheer", "spin"]) {
     await C.ev(`(${idle.slice(1, -1).replace(", 0", "")}, funAction('${act}'), 0)`);
-    let hopped = false, flips = 0, lastDir = await C.ev("targetDir"), settled = false;
+    let hopped = false, flips = 0, lastDir = await C.ev("targetDir"), settled = false, sawCheerPose = false;
     for (let i = 0; i < 60 && !settled; i++) {
       await sleep(150);
       const st = JSON.parse(await C.ev("JSON.stringify({ hop: !!jump, dir: targetDir, mode, anim: !!anim, pose: currentPose })"));
-      hopped ||= st.hop; if (st.dir !== lastDir) { flips++; lastDir = st.dir; }
+      hopped ||= st.hop; sawCheerPose ||= st.pose === "cheer"; if (st.dir !== lastDir) { flips++; lastDir = st.dir; }
       settled = i > 6 && !st.hop && st.mode === "stand" && !st.anim && (await C.ev("nextAt")) < Infinity;
     }
-    check(`fun move "${act}" plays and he settles`, settled && (act === "cheer" ? hopped : flips >= 3), act === "cheer" ? `hopped=${hopped}` : `turned ${flips}x`);
+    check(`fun move "${act}" plays and he settles (cheer picture is for the greeting only)`, settled && !sawCheerPose && (act === "cheer" ? hopped : flips >= 3), act === "cheer" ? `hopped=${hopped}` : `turned ${flips}x`);
   }
   await C.ev(idle);
 
@@ -136,7 +136,7 @@ try {
   let p = await point();
   await mouse("mousePressed", p.x, p.y); await mouse("mouseReleased", p.x, p.y);
   await sleep(700);
-  check("single click: confused pose and a line from his content", (await C.ev("currentPose")) === "confused" && (await C.ev("bubble.style.display === 'flex'")) === true);
+  check("single click: looking pose and a line from his content", (await C.ev("currentPose")) === "looking" && (await C.ev("bubble.style.display === 'flex'")) === true);
   await C.ev(idle); p = await point();
   await mouse("mousePressed", p.x, p.y); await mouse("mouseReleased", p.x, p.y); await sleep(60);
   await mouse("mousePressed", p.x, p.y, { clickCount: 2 }); await mouse("mouseReleased", p.x, p.y, { clickCount: 2 });
