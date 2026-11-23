@@ -239,6 +239,7 @@
     <div class="card">
       <dl class="kv">
         <dt>Version</dt><dd id="aboutVer"></dd>
+        <dt>Updates</dt><dd><button class="btn alt" id="updBtn">Check for updates</button> <span id="updMsg" role="status" aria-live="polite" style="margin-left:8px"></span></dd>
         <dt>Author</dt><dd>Abid KP</dd>
         <dt>Website</dt><dd>abidkp.com</dd>
         <dt>License</dt><dd>MIT License</dd>
@@ -282,7 +283,7 @@
     <div class="actions" style="padding-left:0"><button class="btn alt" id="openData">Open data folder</button></div>
 
     <h3>Network access</h3>
-    <p>Damu makes no network connections. All images, animations, fonts and voice clips are bundled with the app and loaded from your disk. There is no auto-update check. Buttons that open a web page (such as View on GitHub) just launch your default browser; Damu itself still makes no connections.</p>
+    <p>Damu makes no network connections of its own. All images, animations, fonts and voice clips are bundled with the app and loaded from your disk. The one exception is the <em>Check for updates</em> button on the About page: only when you press it, Damu asks GitHub's public releases page which version is newest (nothing about you or your computer is sent, apart from the IP address any web request reveals). There are no automatic or background checks. Buttons that open a web page (such as View on GitHub) just launch your default browser.</p>
 
     <h3>What Damu can see</h3>
     <ul>

@@ -14,6 +14,6 @@ acknowledgement within a few days. Once a fix is released, you'll be credited un
 
 ## What counts
 
-Damu is a local desktop app that makes no network connections, so the realistic issues are things like the
+Damu is a local desktop app that makes no network connections of its own (the only request is the manual "Check for updates" button), so the realistic issues are things like the
 overlay or Settings window exposing more than intended, unsafe handling of `assets/content.json`, or problems in
 the installer or release pipeline.

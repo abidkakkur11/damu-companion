@@ -32,11 +32,13 @@ function handleAppProtocol(request) {
 }
 
 // Pages the Settings window may open in the default browser (looked up by key, never by raw URL).
+const { isNewer, PLAIN } = require("./version");
 const LINKS = {
   repo: "https://github.com/abidkakkur11/damu-companion",
   site: "https://abidkakkur11.github.io/damu-companion/",
   issues: "https://github.com/abidkakkur11/damu-companion/issues",
   author: "https://abidkp.com",
+  latest: "https://github.com/abidkakkur11/damu-companion/releases/latest",
 };
 
 // Characters live in assets/characters/<id>/ (character.json + poses, anim, faces, audio, content.json).
@@ -232,6 +234,24 @@ ipcMain.on("action", (_e, name) => {
 });
 ipcMain.on("open-link", (_e, key) => {
   if (Object.hasOwn(LINKS, key)) shell.openExternal(LINKS[key]);
+});
+// Manual "Check for updates" (About page). The only network request Damu ever makes, and only when the button is pressed:
+// one GET to GitHub's public releases API. Nothing is sent about the user.
+ipcMain.handle("update:check", async () => {
+  try {
+    const res = await net.fetch("https://api.github.com/repos/abidkakkur11/damu-companion/releases/latest", {
+      headers: { Accept: "application/vnd.github+json" },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const latest = String((await res.json()).tag_name || "").replace(/^v/, "");
+    if (!PLAIN.test(latest)) throw new Error("unexpected version");
+    const current = app.getVersion();
+    return { ok: true, current, latest, newer: isNewer(latest, current) };
+  } catch (err) {
+    console.warn("update check failed:", err.message);
+    return { ok: false };
+  }
 });
 ipcMain.on("open-data-folder", () => shell.openPath(app.getPath("userData")));
 ipcMain.on("left-screen", () => {
