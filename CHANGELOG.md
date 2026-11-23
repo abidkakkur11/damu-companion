@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
-## [3.1.0] - Unreleased
+## [3.1.0] - 2026-11-23
 
 ### Added
 - **Check for updates** button on the About page. Press it and Damu asks GitHub's public releases page for the newest version, then tells you whether you are up to date or offers a download link. It is manual only: no automatic or background checks, nothing is sent about you. The privacy policy, README and website say so.
