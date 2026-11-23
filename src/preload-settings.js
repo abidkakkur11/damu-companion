@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld("settingsApi", {
   setLogin: (on) => ipcRenderer.invoke("login:set", on),
   action: (name, arg) => ipcRenderer.send("action", name, arg),
   openDataFolder: () => ipcRenderer.send("open-data-folder"),
+  checkUpdate: () => ipcRenderer.invoke("update:check"),
   openLink: (key) => ipcRenderer.send("open-link", key),
   onChanged: (cb) => ipcRenderer.on("settings", (_e, s) => cb(s)),
 });

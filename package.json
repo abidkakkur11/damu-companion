@@ -29,7 +29,7 @@
   },
   "scripts": {
     "start": "electron .",
-    "check": "node --check src/main.js && node --check src/companion.js && node --check src/settings.js && node --check src/preload.js && node --check src/preload-settings.js",
+    "check": "node --check src/main.js && node --check src/companion.js && node --check src/settings.js && node --check src/preload.js && node --check src/preload-settings.js && node --check src/version.js && node test/unit.mjs",
     "pack": "electron-builder --win --dir --publish never",
     "dist": "electron-builder --win --publish never",
     "icon": "node scripts/make-icon.js",

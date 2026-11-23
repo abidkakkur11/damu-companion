@@ -109,6 +109,24 @@ document.getElementById("reset").addEventListener("click", () => {
 for (const btn of document.querySelectorAll("[data-link]")) {
   btn.addEventListener("click", () => api.openLink(btn.dataset.link));
 }
+// Manual update check (About page): one request to GitHub, only when pressed.
+const updBtn = document.getElementById("updBtn");
+const updMsg = document.getElementById("updMsg");
+let updateReady = false;
+updBtn.addEventListener("click", async () => {
+  if (updateReady) return api.openLink("latest");
+  updBtn.disabled = true;
+  updMsg.textContent = "Checking…";
+  const r = await api.checkUpdate();
+  updBtn.disabled = false;
+  if (!r.ok) updMsg.textContent = "Couldn't check. Are you online?";
+  else if (r.newer) {
+    updateReady = true;
+    updBtn.textContent = `Download ${r.latest}`;
+    updBtn.classList.remove("alt");
+    updMsg.textContent = `Version ${r.latest} is available (you have ${r.current}).`;
+  } else updMsg.textContent = `You're up to date (version ${r.current}).`;
+});
 document.getElementById("openData").addEventListener("click", () => api.openDataFolder());
 for (const btn of document.querySelectorAll("[data-action]")) {
   btn.addEventListener("click", () => api.action(btn.dataset.action, btn.dataset.arg));

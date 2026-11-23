@@ -52,7 +52,7 @@ unset the `ELECTRON_RUN_AS_NODE` environment variable.
 
 Guidelines:
 
-- Keep the app private by design: no network calls, no telemetry. Anything that affects data handling must also
+- Keep the app private by design: no telemetry and no network calls except the manual "Check for updates" button. Anything that affects data handling must also
   update the Privacy Policy in `src/settings.html`.
 - Settings are validated in `src/main.js` (`DEFAULTS` and `RANGES`); a new setting needs its default there, a control
   in `src/settings.html` with a `data-key`, and a reader in `src/companion.js` via `cfg`.

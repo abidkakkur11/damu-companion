@@ -21,7 +21,7 @@ the one you picked walks over, shows a speech bubble with a dialogue and plays i
 another clip plays while he cheers or spins around. Click, double-click or drag him and he reacts with his own
 voice. You write the dialogues and supply the audio.
 
-Everything runs locally: no accounts, no telemetry, no network access.
+Everything runs locally: no accounts and no telemetry. Damu never connects to the internet on its own; the only network request is the optional **Check for updates** button.
 
 <p align="center">
   <img src="docs/screenshots/dialogue.png" alt="Damu showing a dialogue with an OK button" width="420">
@@ -139,7 +139,7 @@ Restart Damu after editing. In a packaged app the file is inside the installer, 
 | Dialogues | Visits on/off, minutes between visits (1-120), "Dialogue now" |
 | Companion | Walking speed (0.4x-3x), size (60%-160%), off-screen trips |
 | Audio | Master switch, volume, dialogue sounds, mouse-reaction sounds, test sound |
-| About | Version, author, licence |
+| About | Version, **Check for updates**, author, licence |
 | Privacy Policy | What Damu stores and what it never does |
 
 Settings are saved to `settings.json` in the app's data folder (`%APPDATA%\damu-companion` on Windows,
@@ -159,7 +159,7 @@ npm start
 | Command | What it does |
 | --- | --- |
 | `npm start` | Run Damu in development |
-| `npm run check` | Syntax-check the source files |
+| `npm run check` | Syntax-check the source files and run the unit tests |
 | `npm run test:e2e` | Launch the app and test it end to end (both characters) |
 | `npm run pack` / `npm run pack:mac` | Build an unpacked app in `dist/` (Windows / macOS) |
 | `npm run dist` | Build the Windows installer in `dist/` |
@@ -207,7 +207,7 @@ Windows and macOS. It is licensed under the SIL Open Font License 1.1 (see [`ass
 
 ## Privacy
 
-Damu collects no data and makes no network connections. The only thing it saves is your preferences, locally.
+Damu collects no data and makes no network connections of its own. The only thing it saves is your preferences, locally. The one exception is the **Check for updates** button on the About page: only when you press it, Damu asks GitHub's public releases page for the newest version. There are no automatic or background checks.
 It never takes screenshots, logs keystrokes or reads your files. The full policy is in the app under
 **Settings > Privacy Policy**.
 

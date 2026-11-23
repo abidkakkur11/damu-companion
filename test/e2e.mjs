@@ -152,6 +152,16 @@ try {
   check("dropping puts him down", (await C.ev("!dragging && mode === 'stand'")) === true);
   await C.ev(idle);
 
+  section("About: manual update check");
+  await S.ev("document.querySelector('[data-page=about]').click()");
+  check("About page has the update button and no check has run yet", (await S.ev("document.getElementById('updBtn').offsetParent !== null && document.getElementById('updMsg').textContent === ''")) === true);
+  await S.ev("document.getElementById('updBtn').click()");
+  const upd = await waitFor(() => S.ev("(() => { const t = document.getElementById('updMsg').textContent; return t && t !== 'Checking…' ? t : false; })()"), 20000, 300);
+  // Needs internet: either answer is a valid, readable result; "Couldn't check" is what an offline machine shows.
+  check("pressing it shows a result (up to date, update available, or offline)", /up to date|is available|Couldn't check/.test(upd || ""), upd || "no result");
+  check("the button is usable again afterwards", (await S.ev("!document.getElementById('updBtn').disabled")) === true);
+  await S.ev("document.querySelector('[data-page=general]').click()");
+
   section("Settings: speed, size, ranges, saving");
   await S.ev("settingsApi.set({ walkSpeed: 2, size: 1.5, volume: 0.3 })");
   await sleep(400);
